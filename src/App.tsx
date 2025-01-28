@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, Grid, Edges } from '@react-three/drei'
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { calculateNextStep, createVector3D, createCelestialBody, type CelestialBodyData, type Vector3D } from './berechnung'
@@ -11,6 +11,11 @@ const CelestialBody: React.FC<{ position: [number, number, number], color: strin
     <mesh position={position}>
       <sphereGeometry args={[1, 32, 32]} />
       <meshStandardMaterial color={color} />
+      <Edges
+        scale={1}
+        threshold={1} // Reduzierter Threshold-Wert
+        color="white"
+      />
     </mesh>
   )
 }
@@ -91,12 +96,30 @@ const ControlPanel: React.FC<{
   onTimeStepChange: (newTimeStep: number) => void;
 }> = ({ bodies, onBodiesChange, isRunning, onToggleRunning, onReset, timeStep, onTimeStepChange }) => {
   return (
-    <div className="controls-container">
+    <>
+      <div className="bodies-container">
+        <div className="bodies-controls">
+          {bodies.map((body, index) => (
+            <BodyControls
+              key={index}
+              body={body}
+              onChange={(newBody) => {
+                const newBodies = [...bodies];
+                newBodies[index] = newBody;
+                onBodiesChange(newBodies);
+              }}
+              bodyName={`Körper ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
       <div className="simulation-controls">
-        <button onClick={onToggleRunning}>
-          {isRunning ? 'Pause' : 'Start'}
-        </button>
-        <button onClick={onReset}>Reset</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={onToggleRunning}>
+            {isRunning ? 'Pause' : 'Start'}
+          </button>
+          <button onClick={onReset}>Reset</button>
+        </div>
         <div className="time-step-control">
           <label>Zeitschritt:</label>
           <input
@@ -110,21 +133,7 @@ const ControlPanel: React.FC<{
           <span>{timeStep.toFixed(3)}</span>
         </div>
       </div>
-      <div className="bodies-controls">
-        {bodies.map((body, index) => (
-          <BodyControls
-            key={index}
-            body={body}
-            onChange={(newBody) => {
-              const newBodies = [...bodies];
-              newBodies[index] = newBody;
-              onBodiesChange(newBodies);
-            }}
-            bodyName={`Körper ${index + 1}`}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   )
 }
 
@@ -136,6 +145,20 @@ const Scene: React.FC<{ bodies: CelestialBodyData[] }> = ({ bodies }) => {
       {/* Umgebungslicht für bessere Sichtbarkeit */}
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
+      
+      {/* Koordinatensystem */}
+      <Grid
+        args={[100, 100]}
+        position={[0, -10, 0]}
+        cellSize={1}
+        cellThickness={0.5}
+        cellColor="#666"
+        sectionSize={5}
+        sectionThickness={1}
+        sectionColor="#aaa"
+        fadeDistance={50}
+        fadeStrength={1}
+      />
       
       {/* Die drei Himmelskörper */}
       {bodies.map((body, index) => {

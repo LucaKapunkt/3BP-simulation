@@ -250,6 +250,7 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
      - **Körper 1**: Kamera zentriert/folgt Körper 1.  
      - **Körper 2**  
      - **Körper 3**  
+     - **Ursprung** 
      - **Gravitationszentrum**: Berechne den Schwerpunkt, fokussiere Kamera darauf.  
      - **Frei**: Nutzer kann per Maus/Tastatur im Raum navigieren (Orbit Controls, etc.).  
 2. **Bahnenanzeige**  
