@@ -94,7 +94,6 @@ Diese Webanwendung simuliert das **Drei-Körper-Problem** im **dreidimensionalen
 ### (Optionales) Backend
 
 Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wissenschaftlichen Funktionen erfordert, ist ein **Backend aktuell nicht zwingend notwendig**.  
-- **Serverless-Hosting** (z. B. **Netlify**, **Vercel**, **GitHub Pages**): Für die statischen Dateien der Anwendung.  
 
 ### Zusammenfassung
 
@@ -136,16 +135,20 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
 ## Current file structure
 3bp-simulation/
 ├─ public/
-│   └─ index.html
+│   └─ vite.svg
 │
 ├─ src/
-│   ├─ App.tsx
+│   ├─ assets/
+│   │    └─ vite.svg
+│   ├─ App.css
+│   ├─ App.tsx  
+│   ├─ index.css
 │   ├─ main.tsx
-│   ├─ ThreeScene.tsx
-│   ├─ physics.ts
-│   └─ styles.css
+│   └─ vite-env.d.ts
 │
+├─ package-lock.json
 ├─ package.json
+├─ tsconfig.app.json
 ├─ tsconfig.json
-├─ .gitignore
-└─ README.md
+├─ tsconfig.node.json
+└─ vite.config.ts
