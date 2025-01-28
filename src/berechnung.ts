@@ -1,12 +1,12 @@
 // Typ-Definitionen für die 3D-Vektoren
-interface Vector3D {
+export interface Vector3D {
     x: number;
     y: number;
     z: number;
 }
 
 // Typ-Definition für einen Himmelskörper
-interface CelestialBodyData {
+export interface CelestialBodyData {
     position: Vector3D;
     velocity: Vector3D;
     mass: number;
@@ -16,64 +16,92 @@ interface CelestialBodyData {
 interface SimulationParameters {
     bodies: CelestialBodyData[];
     timeStep: number;
-    totalTime: number;
 }
 
-// Typ-Definition für die Simulationsergebnisse
-interface SimulationResults {
-    positions: Vector3D[][];  // Array von Positionen für jeden Zeitschritt
-    velocities: Vector3D[][]; // Array von Geschwindigkeiten für jeden Zeitschritt
-    timeSteps: number[];     // Array der Zeitpunkte
+// Typ-Definition für die Simulationsergebnisse eines Schritts
+interface SimulationStepResult {
+    positions: Vector3D[];  // Neue Positionen der Körper
+    velocities: Vector3D[]; // Neue Geschwindigkeiten der Körper
 }
 
 /**
- * Berechnet die Bewegung der Himmelskörper
- * @param params - Die Simulationsparameter
- * @returns Die berechneten Positionen und Geschwindigkeiten für jeden Zeitschritt
+ * Berechnet die Gravitationsbeschleunigung für einen Körper
+ * @param bodyIndex - Index des Zielkörpers
+ * @param bodies - Array aller Himmelskörper
+ * @returns Beschleunigungsvektor
  */
-export function calculateMotion(params: SimulationParameters): SimulationResults {
-    console.log('calculateMotion aufgerufen mit:', params);
+function calculateAcceleration(
+    bodyIndex: number,
+    bodies: CelestialBodyData[]
+): Vector3D {
+    console.log('calculateAcceleration aufgerufen für Körper:', bodyIndex);
+    
+    const targetBody = bodies[bodyIndex];
+    let ax = 0;
+    let ay = 0;
+    let az = 0;
 
-    // Initialisierung der Ergebnisarrays
-    const positions: Vector3D[][] = [];
-    const velocities: Vector3D[][] = [];
-    const timeSteps: number[] = [];
+    for (let i = 0; i < bodies.length; i++) {
+        if (i === bodyIndex) continue; // Kein Einfluss des Körpers auf sich selbst
 
-    // Anzahl der Zeitschritte berechnen
-    const numberOfSteps = Math.floor(params.totalTime / params.timeStep);
+        const sourceBody = bodies[i];
+        const dx = sourceBody.position.x - targetBody.position.x;
+        const dy = sourceBody.position.y - targetBody.position.y;
+        const dz = sourceBody.position.z - targetBody.position.z;
+        const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    // Beispielhafte Berechnung (wird später durch echte Physik ersetzt)
-    for (let step = 0; step < numberOfSteps; step++) {
-        const currentTime = step * params.timeStep;
-        const currentPositions: Vector3D[] = [];
-        const currentVelocities: Vector3D[] = [];
+        if (distance === 0) continue; // Vermeide Division durch 0
 
-        // Für jeden Körper eine einfache lineare Bewegung berechnen
-        params.bodies.forEach((body, index) => {
-            // Beispielhafte lineare Bewegung (wird später ersetzt)
-            currentPositions.push({
-                x: body.position.x + body.velocity.x * currentTime,
-                y: body.position.y + body.velocity.y * currentTime,
-                z: body.position.z + body.velocity.z * currentTime
-            });
-
-            // Geschwindigkeiten bleiben konstant in diesem Beispiel
-            currentVelocities.push({ ...body.velocity });
-        });
-
-        positions.push(currentPositions);
-        velocities.push(currentVelocities);
-        timeSteps.push(currentTime);
+        const force = (sourceBody.mass / Math.pow(distance, 3));
+        ax += force * dx;
+        ay += force * dy;
+        az += force * dz;
     }
 
-    const results: SimulationResults = {
-        positions,
-        velocities,
-        timeSteps
+    const result = { x: ax, y: ay, z: az };
+    console.log('calculateAcceleration Ergebnis:', result);
+    return result;
+}
+
+/**
+ * Berechnet einen einzelnen Zeitschritt der Simulation
+ * @param params - Die Simulationsparameter
+ * @returns Die neuen Positionen und Geschwindigkeiten der Körper
+ */
+export function calculateNextStep(params: SimulationParameters): SimulationStepResult {
+    console.log('calculateNextStep aufgerufen mit:', params);
+    
+    const newBodies = params.bodies.map((body, index) => {
+        // Beschleunigungen berechnen
+        const acceleration = calculateAcceleration(index, params.bodies);
+
+        // Neue Position und Geschwindigkeit mit Runge-Kutta-Ansatz
+        const newPosition: Vector3D = {
+            x: body.position.x + body.velocity.x * params.timeStep + 0.5 * acceleration.x * params.timeStep * params.timeStep,
+            y: body.position.y + body.velocity.y * params.timeStep + 0.5 * acceleration.y * params.timeStep * params.timeStep,
+            z: body.position.z + body.velocity.z * params.timeStep + 0.5 * acceleration.z * params.timeStep * params.timeStep
+        };
+
+        const newVelocity: Vector3D = {
+            x: body.velocity.x + acceleration.x * params.timeStep,
+            y: body.velocity.y + acceleration.y * params.timeStep,
+            z: body.velocity.z + acceleration.z * params.timeStep
+        };
+
+        return {
+            mass: body.mass,
+            position: newPosition,
+            velocity: newVelocity
+        };
+    });
+
+    const result: SimulationStepResult = {
+        positions: newBodies.map(body => body.position),
+        velocities: newBodies.map(body => body.velocity)
     };
 
-    console.log('calculateMotion beendet mit Ergebnissen:', results);
-    return results;
+    console.log('calculateNextStep beendet mit Ergebnissen:', result);
+    return result;
 }
 
 // Hilfsfunktion zum Erstellen eines Vector3D-Objekts
