@@ -1,0 +1,71 @@
+
+
+----------- Git commands -----------
+
+
+
+git add .
+#Fügt alle Änderungen (neue, bearbeitete und gelöschte Dateien) zur Staging-Area hinzu, damit sie im nächsten Commit gespeichert werden.
+
+git commit -m "commit message"
+#Speichert die Änderungen in der Git-Historie mit einer erklärenden Nachricht (in diesem Fall "commit message").
+
+git push
+#Überträgt die lokalen Commits auf das entfernte Repository (z. B. GitHub, GitLab).
+
+git pull
+#Holt die neuesten Änderungen vom entfernten Repository und integriert sie in das aktuelle Branch (führt git fetch und git merge aus).
+
+git status
+#Zeigt den aktuellen Zustand des Arbeitsverzeichnisses und der Staging-Area an, z. B. welche Dateien geändert wurden oder noch nicht zum Commit hinzugefügt sind.
+
+git checkout branchname
+#   Wechselt zum angegebenen Branch branchname.
+
+git checkout -b branchname
+#Erstellt einen neuen Branch branchname und wechselt direkt zu diesem Branch.
+
+git branch
+#Listet alle lokalen Branches im Repository auf. Der aktuelle Branch wird mit einem Sternchen markiert.
+
+git branch -d branchname
+#Löscht den angegebenen lokalen Branch branchname (nur, wenn dieser bereits gemerged wurde).
+
+git merge branchname
+#Führt die Änderungen von branchname in den aktuellen Branch zusammen.
+
+git reset --hard commitid
+#Setzt das Repository auf den angegebenen Commit zurück und verwirft alle Änderungen seit diesem Commit (auf allen Branches).
+
+git branch origin branchname
+#Erstellt einen neuen Branch branchname und stellt sicher, dass er vom entfernten Repository (origin) abgeleitet wird.
+
+git log
+#Zeigt die Commit-Historie des aktuellen Branches an.
+
+git diff
+#Zeigt die Unterschiede zwischen dem aktuellen Arbeitsverzeichnis und der Staging-Area an.
+
+git fetch
+#Holt alle Änderungen vom entfernten Repository, ohne sie zu mergen (nur abrufen, nicht anwenden).
+
+git rebase branchname
+#Wendet die Commits des aktuellen Branches auf den angegebenen branchname an (ändert die Commit-Historie).
+
+git stash
+#Speichert vorübergehend nicht committete Änderungen und stellt den Arbeitsbereich wieder her.
+
+git stash pop
+#Holt die zuletzt gespeicherten Änderungen aus dem Stash und wendet sie auf das Arbeitsverzeichnis an.
+
+git remote -v
+#Zeigt die entfernten Repositories (z. B. GitHub, GitLab) und ihre URLs an.
+
+git clone <repository-url>
+#Erstellt eine lokale Kopie eines entfernten Repositories.
+
+git show commitid
+#Zeigt Details zu einem bestimmten Commit an.
+
+git tag
+#Listet alle Tags im Repository auf. Tags sind oft für markierte Versionen wie Releases oder Meilensteine.
