@@ -40,3 +40,22 @@
 .read-the-docs {
   color: #888;
 }
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  position: relative;
+}
+
+/* Styles für die UI-Elemente, die wir später hinzufügen werden */
+.controls-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 8px;
+}

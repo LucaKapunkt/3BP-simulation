@@ -130,7 +130,202 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
 - **Responsives Design**: Anpassung der UI an verschiedene Bildschirmgrößen (Desktops, Laptops, Tablets, etc.).
 
 
-## Documentation
+## Projektablauf
+
+### 1. Grobe Übersicht:
+
+1. **Projekt-Setup und Grundgerüst**  
+   - Projekt initialisieren (z. B. mit Vite + React + TypeScript).  
+   - Grundlegende Dateistruktur erstellen (siehe PRD-Empfehlung).  
+
+2. **3D-Szene aufsetzen**  
+   - Canvas-Szene einrichten (Three.js oder React-Three-Fiber).  
+   - Erste Testobjekte rendern (z. B. drei simple Kugeln).  
+
+3. **Physik & Numerische Integration**  
+   - Die Kernlogik (z. B. Runge-Kutta) für die Berechnung der Drei-Körper-Bewegungen implementieren.  
+   - Schnittstelle zum 3D-Rendering definieren (Positionsupdates).  
+
+4. **Benutzeroberfläche & Parameter-Eingaben**  
+   - UI-Elemente erstellen: Eingabefelder/Slider für Position, Geschwindigkeit, Masse.  
+   - Buttons für Start, Pause, Reset, etc. einbauen.  
+
+5. **Kamerafunktionen & Bahnenanzeige**  
+   - Verschiedene Kamerafokus-Modi implementieren.  
+   - Optional: Pfadlinien (Orbits) ein- und ausblenden.  
+
+6. **Fehlermanagement & Kollisionserkennung**  
+   - Kollisionsabstand definieren und Logik für Kollisionswarnungen.  
+   - Validierung der Eingabeparameter (z. B. ungültige Zahlenwerte).  
+
+7. **Optimierung & Feinschliff**  
+   - Performance-Tuning (z. B. Web Worker, FPS-Limits, etc.).  
+   - UI-Styling, responsives Design, Tooltips.  
+
+8. **Deployment & Dokumentation**  
+   - Finales Testing auf verschiedenen Browsern.  
+   - Deployment (z. B. auf GitHub Pages, Netlify, o. Ä.).  
+   - README/PRD aktualisieren und finalisieren.  
+
+---
+
+### 2. Detaillierte Umsetzungsschritte:
+
+#### **2.1 Projekt-Setup und Grundgerüst**
+
+**Hauptaspekte:**
+- **Initialisierung**:  
+  - Starte ein neues Projekt mit Vite oder Create React App (falls gewünscht).  
+  - Wähle TypeScript als Sprache.  
+- **Ordnerstruktur**:  
+  - Lege die Minimalstruktur gemäß PRD an (z. B. `src/main.tsx`, `src/App.tsx`, `src/simulation.ts`, etc.).  
+- **Basis-Konfiguration**:  
+  - Richte `tsconfig.json` (TypeScript-Einstellungen) ein.  
+  - Passe `vite.config.ts` an, falls Custom-Build-Einstellungen erforderlich sind.  
+
+**Ziel**: Eine lauffähige, leere React-Anwendung, die im Browser unter `localhost:3000` (oder Standard-Port) erreichbar ist.
+
+---
+
+#### **2.2 3D-Szene aufsetzen**
+
+**Hauptaspekte:**
+1. **Three.js oder React Three Fiber**  
+   - Entscheide dich für eine Implementierung in reinem Three.js oder nutze React Three Fiber.  
+   - Erstelle eine einfache `<Canvas>`-Komponente (bei React Three Fiber) oder initialisiere eine Three.js-Renderer-Instanz in `App.tsx`.  
+2. **Erste Testobjekte**  
+   - Implementiere drei einfache Kugeln (Sphären) als Platzhalter-Körper.  
+   - Positioniere sie an unterschiedlichen Startkoordinaten.  
+3. **Licht & Hintergrund**  
+   - Füge ggf. ein einfaches Licht (DirectionalLight) hinzu, um 3D-Objekte sichtbar zu machen.  
+   - Setze eine Hintergrundfarbe oder ein passendes Environment (optional).
+
+**Ziel**: Drei sichtbare Kugeln in einer 3D-Szene, die als Platzhalter für die Himmelskörper dienen.
+
+---
+
+#### **2.3 Physik & Numerische Integration**
+
+**Hauptaspekte:**
+1. **Grundlegendes Physik-Modul** (`simulation.ts`)  
+   - Erstelle Datenstrukturen für jedes Objekt (z. B. Masse, Position, Geschwindigkeit, Beschleunigung).  
+   - Implementiere eine Funktion zur Berechnung der Gravitationskraft zwischen zwei Körpern (Newtonsche Gravitationsformel).  
+2. **Numerische Verfahren**  
+   - Entscheide dich für ein Integrationsverfahren: Euler, Verlet oder Runge-Kutta (RK4).  
+   - Schreibe eine Funktion, die pro Zeitschritt die neuen Positionen und Geschwindigkeiten aller Körper berechnet.  
+3. **Abgleich mit Renderer**  
+   - Stelle eine Funktion bereit, die vom Renderer (z. B. in jedem Frame) aufgerufen wird, um die aktualisierten Positionen zurückzuliefern.  
+   - Achte auf definierte Zeitschrittgröße (`deltaT`), damit die Simulation stabil bleibt.  
+
+**Ziel**: Eine lauffähige Berechnungsroutine, die im zeitlichen Verlauf Positionsupdates liefert, sodass sich die Kugeln gemäß der Gravitation bewegen.
+
+---
+
+#### **2.4 Benutzeroberfläche & Parameter-Eingaben**
+
+**Hauptaspekte:**
+1. **UI-Elemente**  
+   - Baue im `App.tsx` oder in separaten Komponenten Eingabefelder/Slider für:  
+     - Position (x, y, z)  
+     - Geschwindigkeit (vx, vy, vz)  
+     - Masse  
+   - Binde pro Körper (Körper 1, 2, 3) jeweils diese Eingabeelemente ein.  
+2. **Buttons**  
+   - **Start**: Simulation initialisieren und laufen lassen.  
+   - **Pause/Resume**: Läuft die Simulation, kann sie pausiert werden, erneut klicken führt fort.  
+   - **Reset**: Setzt die Körper auf die ursprünglichen oder neue Startwerte zurück.  
+3. **Datentransfer**  
+   - Wenn Nutzer:innen Parameter ändern, speichere sie in einem State (z. B. `React.useState` oder Redux/Context).  
+   - Beim „Start“ oder „Reset“ werden diese Werte an das Physikmodul (z. B. `simulation.ts`) übergeben.  
+
+**Ziel**: Nutzer:innen können in der UI die Körperdaten anpassen, die App liest diese Werte aus und nutzt sie, um die Simulation zu steuern.
+
+---
+
+#### **2.5 Kamerafunktionen & Bahnenanzeige**
+
+**Hauptaspekte:**
+1. **Kamerafokus**  
+   - Implementiere verschiedene Modi (z. B. Drop-down-Auswahl):  
+     - **Körper 1**: Kamera zentriert/folgt Körper 1.  
+     - **Körper 2**  
+     - **Körper 3**  
+     - **Gravitationszentrum**: Berechne den Schwerpunkt, fokussiere Kamera darauf.  
+     - **Frei**: Nutzer kann per Maus/Tastatur im Raum navigieren (Orbit Controls, etc.).  
+2. **Bahnenanzeige**  
+   - Option: Ein/Aus-Schalter („Orbit lines“).  
+   - Speicherung der jeweiligen Körper-Positionen in einem Array oder Buffer.  
+   - Zeichne mit Three.js-Linienobjekten (LineSegments) oder React Three Fiber `<line>` das Pfadstück nach.  
+
+**Ziel**: Eine flexible Kamera, die den jeweils ausgewählten Fokus hält, und optional die sichtbaren Bahnen aller Körper.
+
+---
+
+#### **2.6 Fehlermanagement & Kollisionserkennung**
+
+**Hauptaspekte:**
+1. **Kollisionsabstand**  
+   - Definiere eine minimal akzeptierte Distanz, ab der eine Kollision gemeldet wird (z. B. Summe der Kugelradien oder ein willkürlicher Wert).  
+2. **Kollisionswarnung**  
+   - Sobald zwei Körper kollidieren, kann die Simulation pausieren oder eine optische Warnung (z. B. rotes Aufleuchten) anzeigen.  
+3. **Eingabevalidierung**  
+   - Achte auf gültige Eingaben (keine negativen Massen, keine zu großen/kleinen Werte, etc.).  
+   - Zeige ggf. eine Fehlermeldung im UI bei ungültigen Parametern.  
+
+**Ziel**: Prävention von physikalisch unmöglichen Szenarien und eine saubere Handhabung, falls Körper zusammenstoßen.
+
+---
+
+#### **2.7 Optimierung & Feinschliff**
+
+**Hauptaspekte:**
+1. **Performance**  
+   - Falls die Berechnungen zu umfangreich werden, ausgelagerte Physik in einen Web Worker.  
+   - Zeitaufwändige Berechnungen nicht auf der Haupt-UI-Thread ausführen.  
+2. **UI/UX-Verbesserungen**  
+   - Stilvolles, responsives Layout (CSS Media Queries, oder ein UI-Framework).  
+   - Tooltips/Hilfetexte für physikalische Erläuterungen.  
+3. **Fehlerkontrollen & Debugging**  
+   - Teste verschiedene Startwerte, hohe und niedrige Massen, große Abstände, etc.  
+   - Checke, ob die Simulation stabil bleibt.  
+
+**Ziel**: Ein ansprechendes, flüssiges Nutzererlebnis ohne störende Ruckler oder unsinnige Simulationsergebnisse.
+
+---
+
+#### **2.8 Deployment & Dokumentation**
+
+**Hauptaspekte:**
+1. **Finales Testing**  
+   - Prüfung in modernen Browsern (Chrome, Firefox, Safari, Edge).  
+   - Mobile/Tablet-Ansicht, falls gewünscht.  
+2. **Deployment**  
+   - Einfache statische Bereitstellung (z. B. über GitHub Pages, Netlify oder Vercel).  
+   - Prüfen, ob alle Ressourcen korrekt geladen werden (3D-Objekte, Bilder, etc.).  
+3. **Dokumentation**  
+   - Aktualisiertes README.md:  
+     - Installationsanleitung (npm install, npm run dev)  
+     - Kurzanleitung zur Nutzung  
+   - Eventuelles Hinzufügen letzter Features/Änderungen ins PRD.  
+
+**Ziel**: Das fertige Projekt steht öffentlich zur Verfügung und ist ausreichend dokumentiert.
+
+---
+
+### **3. Zusammenfassung**
+
+Mit diesem Arbeitsablauf können alle Beteiligten den Entwicklungsprozess schrittweise umsetzen:
+
+1. **Setup** der Grundstrukturen  
+2. **3D-Szene** einrichten und erste Visualisierung  
+3. **Physik**-Modul erstellen und mit dem Renderer verbinden  
+4. **UI** für Parametersteuerung und Start/Pause/Reset  
+5. **Kamera und Bahnen** implementieren  
+6. **Kollision & Fehlermanagement** erweitern  
+7. **Optimieren** und Feinschliff (Performance & UX)  
+8. **Testen & Deployen** für Endnutzer
+
+
 
 ## Current file structure
 3bp-simulation/

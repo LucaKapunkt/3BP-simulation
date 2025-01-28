@@ -1,34 +1,48 @@
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// Komponente für einen einzelnen Himmelskörper
+const CelestialBody: React.FC<{ position: [number, number, number], color: string }> = ({ position, color }) => {
+  console.log('CelestialBody gerendert:', { position, color })
+  return (
+    <mesh position={position}>
+      <sphereGeometry args={[1, 32, 32]} />
+      <meshStandardMaterial color={color} />
+    </mesh>
+  )
+}
 
+// Hauptkomponente für die 3D-Szene
+const Scene: React.FC = () => {
+  console.log('Scene gerendert')
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count**2)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {/* Umgebungslicht für bessere Sichtbarkeit */}
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} />
+      
+      {/* Die drei Himmelskörper */}
+      <CelestialBody position={[-4, 0, 0]} color="blue" />
+      <CelestialBody position={[0, 0, 0]} color="red" />
+      <CelestialBody position={[4, 0, 0]} color="green" />
     </>
+  )
+}
+
+function App() {
+  console.log('App gerendert')
+  return (
+    <div className="app-container">
+      <Canvas camera={{ position: [0, 15, 15], fov: 75 }}>
+        <Scene />
+        <OrbitControls />
+      </Canvas>
+      <div className="controls-container">
+        {/* Hier werden später die Steuerelemente hinzugefügt */}
+      </div>
+    </div>
   )
 }
 
