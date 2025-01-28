@@ -207,7 +207,7 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
 #### **2.3 Physik & Numerische Integration**
 
 **Hauptaspekte:**
-1. **Grundlegendes Physik-Modul** (`simulation.ts`)  
+1. **Grundlegendes Physik-Modul** (`berechnung.ts`)  
    - Erstelle Datenstrukturen für jedes Objekt (z. B. Masse, Position, Geschwindigkeit, Beschleunigung).  
    - Implementiere eine Funktion zur Berechnung der Gravitationskraft zwischen zwei Körpern (Newtonsche Gravitationsformel).  
 2. **Numerische Verfahren**  
@@ -337,6 +337,7 @@ Mit diesem Arbeitsablauf können alle Beteiligten den Entwicklungsprozess schrit
 │   │    └─ vite.svg
 │   ├─ App.css
 │   ├─ App.tsx  
+│   ├─ berechnung.ts
 │   ├─ index.css
 │   ├─ main.tsx
 │   └─ vite-env.d.ts
