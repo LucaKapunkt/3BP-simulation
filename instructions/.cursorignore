@@ -2,7 +2,13 @@
 
 ----------- Git commands -----------
 
+--- Standard Ablauf: ---
 
+git checkout -b branchname
+#Erstellt einen neuen Branch branchname und wechselt direkt zu diesem Branch.
+
+git status
+#Zeigt den aktuellen Zustand des Arbeitsverzeichnisses und der Staging-Area an, z. B. welche Dateien geändert wurden oder noch nicht zum Commit hinzugefügt sind.
 
 git add .
 #Fügt alle Änderungen (neue, bearbeitete und gelöschte Dateien) zur Staging-Area hinzu, damit sie im nächsten Commit gespeichert werden.
@@ -13,20 +19,17 @@ git commit -m "commit message"
 git push
 #Überträgt die lokalen Commits auf das entfernte Repository (z. B. GitHub, GitLab).
 
-git pull
-#Holt die neuesten Änderungen vom entfernten Repository und integriert sie in das aktuelle Branch (führt git fetch und git merge aus).
 
-git status
-#Zeigt den aktuellen Zustand des Arbeitsverzeichnisses und der Staging-Area an, z. B. welche Dateien geändert wurden oder noch nicht zum Commit hinzugefügt sind.
+--- weitere Befehle ---
+
+git branch
+#Listet alle lokalen Branches im Repository auf. Der aktuelle Branch wird mit einem Sternchen markiert.
 
 git checkout branchname
 #   Wechselt zum angegebenen Branch branchname.
 
-git checkout -b branchname
-#Erstellt einen neuen Branch branchname und wechselt direkt zu diesem Branch.
-
-git branch
-#Listet alle lokalen Branches im Repository auf. Der aktuelle Branch wird mit einem Sternchen markiert.
+git pull
+#Holt die neuesten Änderungen vom entfernten Repository und integriert sie in das aktuelle Branch (führt git fetch und git merge aus).
 
 git branch -d branchname
 #Löscht den angegebenen lokalen Branch branchname (nur, wenn dieser bereits gemerged wurde).

@@ -234,6 +234,10 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
    - **Start**: Simulation initialisieren und laufen lassen.  
    - **Pause/Resume**: Läuft die Simulation, kann sie pausiert werden, erneut klicken führt fort.  
    - **Reset**: Setzt die Körper auf die ursprünglichen oder neue Startwerte zurück.  
+   - **Bahnenanzeige**: Ein/Aus-Schalter („Orbit lines“).  
+   - **Kameramodus**: Auswahl der Kamera.
+   - **Edges**: Ein/Aus-Schalter („Edges“).
+   - Optional: Beleuchtung.
 3. **Datentransfer**  
    - Wenn Nutzer:innen Parameter ändern, speichere sie in einem State (z. B. `React.useState` oder Redux/Context).  
    - Beim „Start“ oder „Reset“ werden diese Werte an das Physikmodul (z. B. `simulation.ts`) übergeben.  
@@ -245,14 +249,25 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
 #### **2.5 Kamerafunktionen & Bahnenanzeige**
 
 **Hauptaspekte:**
-1. **Kamerafokus**  
-   - Implementiere verschiedene Modi (z. B. Drop-down-Auswahl):  
-     - **Körper 1**: Kamera zentriert/folgt Körper 1.  
-     - **Körper 2**  
-     - **Körper 3**  
-     - **Ursprung** 
-     - **Gravitationszentrum**: Berechne den Schwerpunkt, fokussiere Kamera darauf.  
-     - **Frei**: Nutzer kann per Maus/Tastatur im Raum navigieren (Orbit Controls, etc.).  
+1. **Kameramodus**   
+   1.**Frei beweglich**: 
+      - **Kameraposition**:
+         - Frei beweglich: Nutzer kann per Tastatur im Raum navigieren (Orbit Controls, etc.).
+      - **Kamerafokus**:
+         - Frei: Nutzer kann Kamera mit Maus schwenken.
+         - Körper: Kamera zentriert/folgt Körper. (Körper kann gewählt werden) 
+         - Ursprung: Kamera zentriert Ursprung.
+         - Optional: Gravitationszentrum: Berechne den Schwerpunkt, fokussiere Kamera darauf.    
+   2.**Körper Kamera:**
+      - **Kameraposition**:
+         - Third Person View: Kamera hält Abstand zum Körper ein. (Körper kann gewählt werden, Anstand kann mit Mausrad verändert werden) 
+         - First Person View: Kamera befindet sich im Zentrum des Körpers. (Körper kann gewählt werden) 
+      - **Kamerafokus**:
+         - Frei: Nutzer kann Kamera mit Maus schwenken.
+         - (Nur bei First Person View): Bewegungsrichtung: Kamera schaut in Bewegungsrichtung.
+         - Körper: Kamera zentriert/folgt Körper. (Körper kann gewählt werden) 
+         - Ursprung: Kamera zentriert Ursprung.
+         - Optional: Gravitationszentrum: Berechne den Schwerpunkt, fokussiere Kamera darauf.
 2. **Bahnenanzeige**  
    - Option: Ein/Aus-Schalter („Orbit lines“).  
    - Speicherung der jeweiligen Körper-Positionen in einem Array oder Buffer.  

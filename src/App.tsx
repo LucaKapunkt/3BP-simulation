@@ -263,7 +263,10 @@ function App() {
         onBodiesChange={setBodies}
         isRunning={isRunning}
         onToggleRunning={() => setIsRunning(prev => !prev)}
-        onReset={() => setBodies(initialBodies)}
+        onReset={() => {
+          setBodies(initialBodies);
+          setIsRunning(false);
+        }}
         timeStep={timeStep}
         onTimeStepChange={setTimeStep}
       />
