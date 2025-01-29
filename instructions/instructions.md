@@ -292,7 +292,28 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
 
 ---
 
-#### **2.7 Optimierung & Feinschliff**
+
+#### **2.7 Funktionserweiterungen**
+
+**Hauptaspekte:**
+1. **Körper**  
+   - Radien der Körper müssen zur Masse passen.  
+   - Texturen für Körper.
+   - Optional: Rotation der Körper.  
+2. **Hintergrund**  
+   - Button:Hintergrund ändern.  
+   - Button: Grid ein/aus.
+   - Weitere Elemente ein/ausblenden.
+3. **Voreinstellungen**  
+   - Voreinstellungen für verschiedene Körper.
+   - Voreinstellungen für verschiedene Bahnen.
+   - Voreinstellungen für reale Systeme.
+
+**Ziel**: Ansprechenderes Design und mehr Funktionalität.
+
+---
+
+#### **2.8 Optimierung & Feinschliff**
 
 **Hauptaspekte:**
 1. **Performance**  
@@ -309,7 +330,7 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
 
 ---
 
-#### **2.8 Deployment & Dokumentation**
+#### **2.9 Deployment & Dokumentation**
 
 **Hauptaspekte:**
 1. **Finales Testing**  
