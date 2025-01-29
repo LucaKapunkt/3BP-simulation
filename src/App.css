@@ -53,21 +53,38 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 100vh;
-  z-index: 10;
-  color: white;
-  padding: 25px;
+  bottom: 0;
   width: 300px;
+  z-index: 10;
+  padding: 30px;
+  gap: 30px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+}
+
+/* Styles für den Controls-Container */
+.controls-container {
+  position: absolute;
+  bottom: 0;
+  left: 300px; /* Breite des bodies-container */
+  right: 0;
+  height: 200px;
+  z-index: 10;
+  padding: 25px;
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: transparent;
 }
 
 /* Styles für die Simulation-Controls */
 .simulation-controls {
-  position: absolute;
-  bottom: 20px;
-  left: 340px;
-  z-index: 10;
+  position: relative; /* Änderung von absolute zu relative */
+  bottom: auto; /* Entfernen der absoluten Positionierung */
+  left: auto;
   color: white;
   background-color: rgba(255, 255, 255, 0.1);
   padding: 20px;
@@ -79,25 +96,57 @@
   height: auto;
 }
 
-.simulation-controls button {
-  padding: 8px 16px;
-  background-color: #2c5282; /* Dunkelblau */
-  border: none;
-  border-radius: 4px;
+/* Styles für die Visualization-Controls */
+.visualization-controls {
+  position: relative; /* Änderung von absolute zu relative */
+  bottom: auto; /* Entfernen der absoluten Positionierung */
+  left: auto;
   color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  width: auto;
+  height: auto;
+}
+
+.simulation-controls button,
+.visualization-controls button {
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   transition: all 0.3s;
   margin-right: 10px;
   font-weight: 500;
+  outline: none;
 }
 
-.simulation-controls button:hover {
-  background-color: #3182ce; /* Helleres Blau beim Hover */
-  transform: translateY(-1px);
+.simulation-controls button:hover,
+.visualization-controls button:hover {
+  border-color: white !important;
+  color: white;
 }
 
-.simulation-controls button:active {
-  transform: translateY(0);
+
+.visualization-controls button.active {
+  border-color: rgba(255, 255, 255, 0.8);
+
+}
+
+.visualization-controls button.inactive {
+  color: rgba(255, 255, 255, 0.3); 
+  background-color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+  
+}
+
+.simulation-controls button:focus,
+.visualization-controls button:focus {
+  outline: none;
 }
 
 .time-step-control {
@@ -110,12 +159,6 @@
   flex: 1;
 }
 
-.bodies-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 25px; /* Reduzierter Abstand zwischen den Körpern */
-  height: 100%;
-}
 
 .body-controls {
   padding: 12px; /* Etwas reduziertes Padding */

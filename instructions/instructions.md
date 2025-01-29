@@ -233,9 +233,7 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
 2. **Buttons**  
    - **Start**: Simulation initialisieren und laufen lassen.  
    - **Pause/Resume**: Läuft die Simulation, kann sie pausiert werden, erneut klicken führt fort.  
-   - **Reset**: Setzt die Körper auf die ursprünglichen oder neue Startwerte zurück.  
-   - **Bahnenanzeige**: Ein/Aus-Schalter („Orbit lines“).  
-   - **Kameramodus**: Auswahl der Kamera.
+   - **Reset**: Setzt die Körper auf die ursprünglichen oder neue Startwerte zurück.   
    - **Edges**: Ein/Aus-Schalter („Edges“).
    - Optional: Beleuchtung.
 3. **Datentransfer**  
@@ -269,7 +267,7 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
          - Ursprung: Kamera zentriert Ursprung.
          - Optional: Gravitationszentrum: Berechne den Schwerpunkt, fokussiere Kamera darauf.
 2. **Bahnenanzeige**  
-   - Option: Ein/Aus-Schalter („Orbit lines“).  
+   - Button: Ein/Aus-Schalter („Orbit lines“).  
    - Speicherung der jeweiligen Körper-Positionen in einem Array oder Buffer.  
    - Zeichne mit Three.js-Linienobjekten (LineSegments) oder React Three Fiber `<line>` das Pfadstück nach.  
 
@@ -308,9 +306,12 @@ Da die Anwendung rein zu Demonstrationszwecken dient und keine tiefgreifenden wi
    - Voreinstellungen für verschiedene Körper.
    - Voreinstellungen für verschiedene Bahnen.
    - Voreinstellungen für reale Systeme.
+4. **Zeit**
+   - Information: 1 Sekunde = (...).
+   - Information: vergangene Zeit seit Start.
 
 **Ziel**: Ansprechenderes Design und mehr Funktionalität.
-
+   
 ---
 
 #### **2.8 Optimierung & Feinschliff**

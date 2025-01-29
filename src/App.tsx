@@ -5,17 +5,19 @@ import './App.css'
 import { calculateNextStep, createVector3D, createCelestialBody, type CelestialBodyData, type Vector3D } from './berechnung'
 
 // Komponente für einen einzelnen Himmelskörper
-const CelestialBody: React.FC<{ position: [number, number, number], color: string }> = ({ position, color }) => {
+const CelestialBody: React.FC<{ position: [number, number, number], color: string, showEdges: boolean }> = ({ position, color, showEdges }) => {
   console.log('CelestialBody gerendert:', { position, color })
   return (
     <mesh position={position}>
       <sphereGeometry args={[1, 32, 32]} />
       <meshStandardMaterial color={color} />
-      <Edges
-        scale={1}
-        threshold={1} // Reduzierter Threshold-Wert
-        color="white"
-      />
+      {showEdges && (
+        <Edges
+          scale={1}
+          threshold={1}
+          color="white"
+        />
+      )}
     </mesh>
   )
 }
@@ -96,49 +98,61 @@ const ControlPanel: React.FC<{
   onTimeStepChange: (newTimeStep: number) => void;
 }> = ({ bodies, onBodiesChange, isRunning, onToggleRunning, onReset, timeStep, onTimeStepChange }) => {
   return (
-    <>
-      <div className="bodies-container">
-        <div className="bodies-controls">
-          {bodies.map((body, index) => (
-            <BodyControls
-              key={index}
-              body={body}
-              onChange={(newBody) => {
-                const newBodies = [...bodies];
-                newBodies[index] = newBody;
-                onBodiesChange(newBodies);
-              }}
-              bodyName={`Körper ${index + 1}`}
-            />
-          ))}
-        </div>
+    <div className="simulation-controls">
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button onClick={onToggleRunning}>
+          {isRunning ? 'Pause' : 'Start'}
+        </button>
+        <button onClick={onReset}>Reset</button>
       </div>
-      <div className="simulation-controls">
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={onToggleRunning}>
-            {isRunning ? 'Pause' : 'Start'}
-          </button>
-          <button onClick={onReset}>Reset</button>
-        </div>
-        <div className="time-step-control">
-          <label>Zeitschritt:</label>
-          <input
-            type="range"
-            min="0.001"
-            max="0.1"
-            step="0.001"
-            value={timeStep}
-            onChange={(e) => onTimeStepChange(parseFloat(e.target.value))}
-          />
-          <span>{timeStep.toFixed(3)}</span>
-        </div>
+      <div className="time-step-control">
+        <label>Zeitschritt:</label>
+        <input
+          type="range"
+          min="0.001"
+          max="0.1"
+          step="0.001"
+          value={timeStep}
+          onChange={(e) => onTimeStepChange(parseFloat(e.target.value))}
+        />
+        <span>{timeStep.toFixed(3)}</span>
       </div>
-    </>
+    </div>
+  )
+}
+
+// Komponente für die Visualisierungs-Steuerung
+const VisualizationControls: React.FC<{
+  showEdges: boolean;
+  onToggleEdges: () => void;
+  showGrid: boolean;
+  onToggleGrid: () => void;
+}> = ({ showEdges, onToggleEdges, showGrid, onToggleGrid }) => {
+  return (
+    <div className="visualization-controls">
+      <button 
+        onClick={onToggleEdges}
+        className={showEdges ? 'active' : 'inactive'}
+      >
+        Edges
+      </button>
+      <button>Bahnen</button>
+      <button 
+        onClick={onToggleGrid}
+        className={showGrid ? 'active' : 'inactive'}
+      >
+        Grid
+      </button>
+    </div>
   )
 }
 
 // Hauptkomponente für die 3D-Szene
-const Scene: React.FC<{ bodies: CelestialBodyData[] }> = ({ bodies }) => {
+const Scene: React.FC<{ 
+  bodies: CelestialBodyData[];
+  showEdges: boolean;
+  showGrid: boolean;
+}> = ({ bodies, showEdges, showGrid }) => {
   console.log('Scene gerendert mit bodies:', bodies)
   return (
     <>
@@ -147,18 +161,20 @@ const Scene: React.FC<{ bodies: CelestialBodyData[] }> = ({ bodies }) => {
       <pointLight position={[10, 10, 10]} />
       
       {/* Koordinatensystem */}
-      <Grid
-        args={[100, 100]}
-        position={[0, -10, 0]}
-        cellSize={1}
-        cellThickness={0.5}
-        cellColor="#666"
-        sectionSize={5}
-        sectionThickness={1}
-        sectionColor="#aaa"
-        fadeDistance={50}
-        fadeStrength={1}
-      />
+      {showGrid && (
+        <Grid
+          args={[100, 100]}
+          position={[0, -10, 0]}
+          cellSize={1}
+          cellThickness={0.5}
+          cellColor="#666"
+          sectionSize={5}
+          sectionThickness={1}
+          sectionColor="#aaa"
+          fadeDistance={50}
+          fadeStrength={1}
+        />
+      )}
       
       {/* Die drei Himmelskörper */}
       {bodies.map((body, index) => {
@@ -173,6 +189,7 @@ const Scene: React.FC<{ bodies: CelestialBodyData[] }> = ({ bodies }) => {
             key={index}
             position={position}
             color={colors[index]}
+            showEdges={showEdges}
           />
         )
       })}
@@ -209,6 +226,10 @@ function App() {
   const [timeStep, setTimeStep] = useState(0.01)
   const animationFrameRef = useRef<number>()
   const [isRunning, setIsRunning] = useState(false)
+
+  // Visualization Parameters
+  const [showEdges, setShowEdges] = useState(true)
+  const [showGrid, setShowGrid] = useState(true)
 
   // State für die Himmelskörper
   const [bodies, setBodies] = useState<CelestialBodyData[]>(() => initialBodies)
@@ -255,21 +276,47 @@ function App() {
   return (
     <div className="app-container">
       <Canvas camera={{ position: [0, 15, 15], fov: 75 }}>
-        <Scene bodies={bodies} />
+        <Scene 
+          bodies={bodies} 
+          showEdges={showEdges}
+          showGrid={showGrid}
+        />
         <OrbitControls />
       </Canvas>
-      <ControlPanel
-        bodies={bodies}
-        onBodiesChange={setBodies}
-        isRunning={isRunning}
-        onToggleRunning={() => setIsRunning(prev => !prev)}
-        onReset={() => {
-          setBodies(initialBodies);
-          setIsRunning(false);
-        }}
-        timeStep={timeStep}
-        onTimeStepChange={setTimeStep}
-      />
+      <div className="bodies-container">
+        {bodies.map((body, index) => (
+          <BodyControls
+            key={index}
+            body={body}
+            onChange={(newBody) => {
+              const newBodies = [...bodies];
+              newBodies[index] = newBody;
+              setBodies(newBodies);
+            }}
+            bodyName={`Körper ${index + 1}`}
+          />
+        ))}
+      </div>
+      <div className="controls-container">
+        <ControlPanel
+          bodies={bodies}
+          onBodiesChange={setBodies}
+          isRunning={isRunning}
+          onToggleRunning={() => setIsRunning(prev => !prev)}
+          onReset={() => {
+            setBodies(initialBodies);
+            setIsRunning(false);
+          }}
+          timeStep={timeStep}
+          onTimeStepChange={setTimeStep}
+        />
+        <VisualizationControls 
+          showEdges={showEdges}
+          onToggleEdges={() => setShowEdges(prev => !prev)}
+          showGrid={showGrid}
+          onToggleGrid={() => setShowGrid(prev => !prev)}
+        />
+      </div>
     </div>
   )
 }
