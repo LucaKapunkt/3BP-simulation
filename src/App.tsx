@@ -138,18 +138,17 @@ const VisualizationControls: React.FC<{
       >
         Edges
       </button>
-      <button>Bahnen</button>
-      <button 
-        onClick={onToggleGrid}
-        className={showGrid ? 'active' : 'inactive'}
-      >
-        Grid
-      </button>
       <button 
         onClick={onToggleBahnen}
         className={showBahnen ? 'active' : 'inactive'}
       >
         Bahnen
+      </button>
+      <button 
+        onClick={onToggleGrid}
+        className={showGrid ? 'active' : 'inactive'}
+      >
+        Grid
       </button>
     </div>
   )
