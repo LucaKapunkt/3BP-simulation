@@ -27,28 +27,59 @@ const VectorInput: React.FC<{
   label: string;
   value: Vector3D;
   onChange: (newValue: Vector3D) => void;
-}> = ({ label, value, onChange }) => {
+  isRunning: boolean;
+}> = ({ label, value, onChange, isRunning }) => {
+  const formatValue = (val: number) => {
+    if (isRunning) return val.toFixed(2);
+    const str = val.toString();
+    if (str.startsWith('0') && str.length > 1 && str[1] !== '.') {
+      return str.substring(1);
+    }
+    return str;
+  };
+
   return (
     <div className="vector-input">
       <label>{label}</label>
       <div className="vector-fields">
         <input
           type="number"
-          value={value.x}
-          onChange={(e) => onChange({ ...value, x: parseFloat(e.target.value) || 0 })}
+          value={formatValue(value.x)}
+          onChange={(e) => {
+            let val = e.target.value;
+            if (val.startsWith('0') && val.length > 1 && val[1] !== ',') {
+              val = val.substring(1);
+            }
+            onChange({ ...value, x: val === '' ? 0 : parseFloat(val) });
+          }}
           placeholder="X"
+          readOnly={isRunning}
         />
         <input
           type="number"
-          value={value.y}
-          onChange={(e) => onChange({ ...value, y: parseFloat(e.target.value) || 0 })}
+          value={formatValue(value.y)}
+          onChange={(e) => {
+            let val = e.target.value;
+            if (val.startsWith('0') && val.length > 1 && val[1] !== ',') {
+              val = val.substring(1);
+            }
+            onChange({ ...value, y: val === '' ? 0 : parseFloat(val) });
+          }}
           placeholder="Y"
+          readOnly={isRunning}
         />
         <input
           type="number"
-          value={value.z}
-          onChange={(e) => onChange({ ...value, z: parseFloat(e.target.value) || 0 })}
+          value={formatValue(value.z)}
+          onChange={(e) => {
+            let val = e.target.value;
+            if (val.startsWith('0') && val.length > 1 && val[1] !== ',') {
+              val = val.substring(1);
+            }
+            onChange({ ...value, z: val === '' ? 0 : parseFloat(val) });
+          }}
           placeholder="Z"
+          readOnly={isRunning}
         />
       </div>
     </div>
@@ -60,7 +91,8 @@ const BodyControls: React.FC<{
   body: CelestialBodyData;
   onChange: (newBody: CelestialBodyData) => void;
   bodyName: string;
-}> = ({ body, onChange, bodyName }) => {
+  isRunning: boolean;
+}> = ({ body, onChange, bodyName, isRunning }) => {
   return (
     <div className="body-controls">
       <h3>{bodyName}</h3>
@@ -68,19 +100,21 @@ const BodyControls: React.FC<{
         label="Position"
         value={body.position}
         onChange={(newPosition) => onChange({ ...body, position: newPosition })}
+        isRunning={isRunning}
       />
       <VectorInput
         label="Geschwindigkeit"
         value={body.velocity}
         onChange={(newVelocity) => onChange({ ...body, velocity: newVelocity })}
+        isRunning={isRunning}
       />
       <div className="mass-input">
         <label>Masse</label>
         <input
           type="number"
-          value={body.mass}
-          onChange={(e) => onChange({ ...body, mass: parseFloat(e.target.value) || 0 })}
-          min="0"
+          value={isRunning ? body.mass.toFixed(2) : body.mass}
+          onChange={(e) => onChange({ ...body, mass: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
+          readOnly={isRunning}
         />
       </div>
     </div>
@@ -348,6 +382,7 @@ function App() {
               setBahnenHistory([[], [], []]);
             }}
             bodyName={`Körper ${index + 1}`}
+            isRunning={isRunning}
           />
         ))}
       </div>

@@ -194,12 +194,27 @@
 .vector-fields input,
 .mass-input input {
   width: 100%;
-  padding: 4px 6px; /* Reduziertes Padding */
+  padding: 4px 6px;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   color: white;
   font-size: 0.9em;
+}
+
+/* Entfernt die Pfeile für Chrome, Safari, Edge, Opera */
+.vector-fields input::-webkit-outer-spin-button,
+.vector-fields input::-webkit-inner-spin-button,
+.mass-input input::-webkit-outer-spin-button,
+.mass-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Entfernt die Pfeile für Firefox */
+.vector-fields input[type=number],
+.mass-input input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .vector-fields input:focus,
