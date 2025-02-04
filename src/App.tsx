@@ -240,19 +240,19 @@ const initialBodies: CelestialBodyData[] = [
   // Körper 1: Blau
   createCelestialBody(
     createVector3D(-25, 0, 15),                    // Position
-    createVector3D(0.347111, 0.532728, 0),       // Geschwindigkeit
+    createVector3D(6, 2, 0),       // Geschwindigkeit
     1000                                         // Masse
   ),
   // Körper 2: Rot
   createCelestialBody(
     createVector3D(20, 0, 20),                     // Position
-    createVector3D(0.347111, 0.532728, 0),       // Geschwindigkeit
+    createVector3D(2, 7, 0),       // Geschwindigkeit
     1000                                         // Masse
   ),
   // Körper 3: Grün
   createCelestialBody(
     createVector3D(0, 0, -20),                     // Position
-    createVector3D(-0.694222, -1.065456, 0),     // Geschwindigkeit
+    createVector3D(-5, -8, 0),     // Geschwindigkeit
     1000                                         // Masse
   )
 ]
