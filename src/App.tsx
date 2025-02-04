@@ -127,7 +127,9 @@ const VisualizationControls: React.FC<{
   onToggleEdges: () => void;
   showGrid: boolean;
   onToggleGrid: () => void;
-}> = ({ showEdges, onToggleEdges, showGrid, onToggleGrid }) => {
+  showBahnen: boolean;
+  onToggleBahnen: () => void;
+}> = ({ showEdges, onToggleEdges, showGrid, onToggleGrid, showBahnen, onToggleBahnen }) => {
   return (
     <div className="visualization-controls">
       <button 
@@ -143,17 +145,46 @@ const VisualizationControls: React.FC<{
       >
         Grid
       </button>
+      <button 
+        onClick={onToggleBahnen}
+        className={showBahnen ? 'active' : 'inactive'}
+      >
+        Bahnen
+      </button>
     </div>
   )
 }
+
+// Komponente für die Bahnen der Himmelskörper
+const Bahn: React.FC<{ 
+  positions: Vector3D[],
+  color: string 
+}> = ({ positions, color }) => {
+  if (positions.length < 2) return null;
+
+  const points = positions.map(pos => [pos.x, pos.y, pos.z]);
+  
+  return (
+    <line>
+      <bufferGeometry>
+        <float32BufferAttribute attach="attributes-position" args={[new Float32Array(points.flat()), 3]} />
+      </bufferGeometry>
+      <lineBasicMaterial color={color} />
+    </line>
+  );
+};
 
 // Hauptkomponente für die 3D-Szene
 const Scene: React.FC<{ 
   bodies: CelestialBodyData[];
   showEdges: boolean;
   showGrid: boolean;
-}> = ({ bodies, showEdges, showGrid }) => {
+  showBahnen: boolean;
+  bahnenHistory: Vector3D[][];
+}> = ({ bodies, showEdges, showGrid, showBahnen, bahnenHistory }) => {
   console.log('Scene gerendert mit bodies:', bodies)
+  const colors = ['blue', 'red', 'green']
+  
   return (
     <>
       {/* Umgebungslicht für bessere Sichtbarkeit */}
@@ -176,6 +207,15 @@ const Scene: React.FC<{
         />
       )}
       
+      {/* Die Bahnen der Himmelskörper */}
+      {showBahnen && bahnenHistory.map((positions, index) => (
+        <Bahn
+          key={`bahn-${index}`}
+          positions={positions}
+          color={colors[index]}
+        />
+      ))}
+      
       {/* Die drei Himmelskörper */}
       {bodies.map((body, index) => {
         const position: [number, number, number] = [
@@ -183,7 +223,6 @@ const Scene: React.FC<{
           body.position.y,
           body.position.z
         ]
-        const colors = ['blue', 'red', 'green']
         return (
           <CelestialBody
             key={index}
@@ -230,6 +269,8 @@ function App() {
   // Visualization Parameters
   const [showEdges, setShowEdges] = useState(true)
   const [showGrid, setShowGrid] = useState(true)
+  const [showBahnen, setShowBahnen] = useState(false)
+  const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>([[], [], []])
 
   // State für die Himmelskörper
   const [bodies, setBodies] = useState<CelestialBodyData[]>(() => initialBodies)
@@ -259,6 +300,16 @@ function App() {
         }))
       )
 
+      // Aktualisiere die Positionshistorie für die Bahnen
+      setBahnenHistory(prevHistory => {
+        const newHistory = prevHistory.map((bodyHistory, index) => {
+          // Begrenze die Historie auf 1000 Punkte pro Körper
+          const limitedHistory = [...bodyHistory.slice(-999), nextStep.positions[index]]
+          return limitedHistory
+        })
+        return newHistory
+      })
+
       // Nächster Frame
       animationFrameRef.current = requestAnimationFrame(animate)
     }
@@ -280,6 +331,8 @@ function App() {
           bodies={bodies} 
           showEdges={showEdges}
           showGrid={showGrid}
+          showBahnen={showBahnen}
+          bahnenHistory={bahnenHistory}
         />
         <OrbitControls />
       </Canvas>
@@ -292,6 +345,8 @@ function App() {
               const newBodies = [...bodies];
               newBodies[index] = newBody;
               setBodies(newBodies);
+              // Lösche die Bahnen beim Ändern der Körper
+              setBahnenHistory([[], [], []]);
             }}
             bodyName={`Körper ${index + 1}`}
           />
@@ -306,6 +361,8 @@ function App() {
           onReset={() => {
             setBodies(initialBodies);
             setIsRunning(false);
+            // Lösche die Bahnen beim Reset
+            setBahnenHistory([[], [], []]);
           }}
           timeStep={timeStep}
           onTimeStepChange={setTimeStep}
@@ -315,6 +372,8 @@ function App() {
           onToggleEdges={() => setShowEdges(prev => !prev)}
           showGrid={showGrid}
           onToggleGrid={() => setShowGrid(prev => !prev)}
+          showBahnen={showBahnen}
+          onToggleBahnen={() => setShowBahnen(prev => !prev)}
         />
       </div>
     </div>
