@@ -239,21 +239,21 @@ const Scene: React.FC<{
 const initialBodies: CelestialBodyData[] = [
   // Körper 1: Blau
   createCelestialBody(
-    createVector3D(-4, 0, 0),  // Position
-    createVector3D(0, 0.5, 0), // Geschwindigkeit
-    1000                       // Masse
+    createVector3D(-25, 0, 15),                    // Position
+    createVector3D(0.347111, 0.532728, 0),       // Geschwindigkeit
+    1000                                         // Masse
   ),
   // Körper 2: Rot
   createCelestialBody(
-    createVector3D(0, 0, 0),   // Position
-    createVector3D(0, 0, 0),   // Geschwindigkeit
-    2000                       // Masse
+    createVector3D(20, 0, 20),                     // Position
+    createVector3D(0.347111, 0.532728, 0),       // Geschwindigkeit
+    1000                                         // Masse
   ),
   // Körper 3: Grün
   createCelestialBody(
-    createVector3D(4, 0, 0),   // Position
-    createVector3D(0, -0.5, 0),// Geschwindigkeit
-    1000                       // Masse
+    createVector3D(0, 0, -20),                     // Position
+    createVector3D(-0.694222, -1.065456, 0),     // Geschwindigkeit
+    1000                                         // Masse
   )
 ]
 
