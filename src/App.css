@@ -112,7 +112,8 @@
 }
 
 .simulation-controls button,
-.visualization-controls button {
+.visualization-controls button,
+.camera-controls button {
   padding: 8px 16px;
   background-color: rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -126,27 +127,29 @@
 }
 
 .simulation-controls button:hover,
-.visualization-controls button:hover {
+.visualization-controls button:hover,
+.camera-controls button:hover {
   border-color: white !important;
-  color: white;
+  color: white 
 }
 
 
-.visualization-controls button.active {
+.simulation-controls button:focus,
+.visualization-controls button:focus,
+.camera-controls button:focus {
+  outline: none;
+}
+
+.visualization-controls button.active,
+.camera-controls button.active {
   border-color: rgba(255, 255, 255, 0.8);
-
 }
 
-.visualization-controls button.inactive {
+.visualization-controls button.inactive,
+.camera-controls button.inactive {
   color: rgba(255, 255, 255, 0.3); 
   background-color: rgba(0, 0, 0, 0.4);
   border-color: rgba(255, 255, 255, 0.3);
-  
-}
-
-.simulation-controls button:focus,
-.visualization-controls button:focus {
-  outline: none;
 }
 
 .time-step-control {
@@ -158,7 +161,6 @@
 .time-step-control input[type="range"] {
   flex: 1;
 }
-
 
 .body-controls {
   padding: 12px; /* Etwas reduziertes Padding */
@@ -228,4 +230,38 @@
   margin-bottom: 5px;
   font-size: 0.9em;
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* Styles für die Camera-Controls */
+.camera-controls {
+  position: relative;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: auto;
+  height: auto;
+}
+
+.camera-controls-row {
+  display: flex;
+  gap: 10px;
+}
+
+.camera-controls-row.sub-controls {
+  gap: 5px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+  margin-top: -20px;
+}
+
+.camera-controls-row.sub-controls.visible {
+  opacity: 1;
+  max-height: 50px;
+  margin-top: 0px;
 }

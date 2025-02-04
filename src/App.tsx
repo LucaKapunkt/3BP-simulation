@@ -188,6 +188,130 @@ const VisualizationControls: React.FC<{
   )
 }
 
+// Komponente für die Camera-Steuerung
+const CameraControls: React.FC = () => {
+  const [camPos, setCamPos] = useState<'Frei' | 'FPV' | '3PV'>('Frei');
+  const [camFokus, setCamFokus] = useState<'Ohne' | 'Körper 1' | 'Körper 2' | 'Körper 3' | 'Bewegungsrichtung' | 'Ursprung'>('Ursprung');
+  const [camKoerper, setCamKoerper] = useState<1 | 2 | 3>(1);
+  const [showControls, setShowControls] = useState<'none' | 'position' | 'focus'>('none');
+
+  const getButtonClass = (type: 'position' | 'focus') => {
+    if (showControls === 'none') return '';
+    return showControls !== type ? 'inactive' : '';
+  };
+
+  return (
+    <div className="camera-controls">
+      <div className="camera-controls-row">
+        <button 
+          onClick={() => setShowControls(prev => prev === 'position' ? 'none' : 'position')}
+          className={getButtonClass('position')}
+        >
+          Position: {camPos}
+        </button>
+        {(camPos === 'FPV' || camPos === '3PV') && (
+          <button 
+            onClick={() => setCamKoerper(prev => prev === 3 ? 1 : (prev + 1) as 2 | 3)}
+          >
+            Körper {camKoerper}
+          </button>
+        )}
+        <button 
+          onClick={() => setShowControls(prev => prev === 'focus' ? 'none' : 'focus')}
+          className={getButtonClass('focus')}
+        >
+          Fokus: {camFokus}
+        </button>
+      </div>
+      <div className={`camera-controls-row sub-controls ${showControls === 'position' ? 'visible' : ''}`}>
+        <button 
+          onClick={() => {
+            setCamPos('Frei');
+            setShowControls('none');
+          }}
+          className={camPos !== 'Frei' ? 'inactive' : ''}
+        >
+          Frei beweglich
+        </button>
+        <button 
+          onClick={() => {
+            setCamPos('FPV');
+            setShowControls('none');
+          }}
+          className={camPos !== 'FPV' ? 'inactive' : ''}
+        >
+          First Person View
+        </button>
+        <button 
+          onClick={() => {
+            setCamPos('3PV');
+            setShowControls('none');
+          }}
+          className={camPos !== '3PV' ? 'inactive' : ''}
+        >
+          Third Person View
+        </button>
+      </div>
+      <div className={`camera-controls-row sub-controls ${showControls === 'focus' ? 'visible' : ''}`}>
+        <button 
+          onClick={() => {
+            setCamFokus('Ohne');
+            setShowControls('none');
+          }}
+          className={camFokus !== 'Ohne' ? 'inactive' : ''}
+        >
+          Kein Fokus
+        </button>
+        <button 
+          onClick={() => {
+            setCamFokus('Körper 1');
+            setShowControls('none');
+          }}
+          className={camFokus !== 'Körper 1' ? 'inactive' : ''}
+        >
+          Körper 1
+        </button>
+        <button 
+          onClick={() => {
+            setCamFokus('Körper 2');
+            setShowControls('none');
+          }}
+          className={camFokus !== 'Körper 2' ? 'inactive' : ''}
+        >
+          Körper 2
+        </button>
+        <button 
+          onClick={() => {
+            setCamFokus('Körper 3');
+            setShowControls('none');
+          }}
+          className={camFokus !== 'Körper 3' ? 'inactive' : ''}
+        >
+          Körper 3
+        </button>
+        <button 
+          onClick={() => {
+            setCamFokus('Bewegungsrichtung');
+            setShowControls('none');
+          }}
+          className={camFokus !== 'Bewegungsrichtung' ? 'inactive' : ''}
+        >
+          Bewegungsrichtung
+        </button>
+        <button 
+          onClick={() => {
+            setCamFokus('Ursprung');
+            setShowControls('none');
+          }}
+          className={camFokus !== 'Ursprung' ? 'inactive' : ''}
+        >
+          Ursprung
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // Komponente für die Bahnen der Himmelskörper
 const Bahn: React.FC<{ 
   positions: Vector3D[],
@@ -409,6 +533,7 @@ function App() {
           showBahnen={showBahnen}
           onToggleBahnen={() => setShowBahnen(prev => !prev)}
         />
+        <CameraControls />
       </div>
     </div>
   )
