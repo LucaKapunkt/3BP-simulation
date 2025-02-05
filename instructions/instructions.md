@@ -368,18 +368,39 @@ Mit diesem Arbeitsablauf können alle Beteiligten den Entwicklungsprozess schrit
 ## Current file structure
 3bp-simulation/
 ├─ public/
-│   └─ vite.svg
+│   └─ icon.svg
 │
 ├─ src/
 │   ├─ assets/
-│   │    └─ vite.svg
-│   ├─ App.css
+│   │    └─ (Bilder, etc.)
+│   │
+│   ├─ components/
+│   │    ├─ celestial/
+│   │    │    └─ CelestialBody.tsx
+│   │    │    └─ Bahn.tsx
+│   │    │
+│   │    ├─ controls/
+│   │    │    └─ VectorInput.tsx
+│   │    │    └─ BodyControls.tsx
+│   │    │    └─ SimulationControls.tsx
+│   │    │    └─ VisualizationControls.tsx
+│   │    │    └─ CameraControls.tsx
+│   │    │
+│   │    └─ Scene.tsx
+│   │
+│   ├─ simulation/
+│   │    └─ Berechnung.ts
+│   │
+│   ├─ styles/
+│   │    └─ App.css
+│   │    └─ index.css
+│   │
 │   ├─ App.tsx  
-│   ├─ berechnung.ts
-│   ├─ index.css
 │   ├─ main.tsx
 │   └─ vite-env.d.ts
 │
+├─ eslint.config.js
+├─ index.html
 ├─ package-lock.json
 ├─ package.json
 ├─ tsconfig.app.json
