@@ -13,33 +13,16 @@ import { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Scene from './components/Scene';
+import PresetSelection from './components/controls/PresetSelection';
 import BodyControls from './components/controls/BodyControls';
 import SimulationControls from './components/controls/SimulationControls';
 import VisualizationControls from './components/controls/VisualizationControls';
 import CameraControls from './components/controls/CameraControls';
-import { calculateNextStep, createCelestialBody, createVector3D, type CelestialBodyData, type Vector3D } from './simulation/Berechnung';
+import { defaultConditions } from './data/initialConditions';
+import { calculateNextStep, type Vector3D } from './simulation/Berechnung';
 import './styles/App.css';
 
-const initialBodies: CelestialBodyData[] = [
-  // Körper 1: Blau
-  createCelestialBody(
-    createVector3D(-25, 0, 15),
-    createVector3D(6, 2, 0),
-    1000
-  ),
-  // Körper 2: Rot
-  createCelestialBody(
-    createVector3D(20, 0, 20),
-    createVector3D(2, 7, 0),
-    1000
-  ),
-  // Körper 3: Grün
-  createCelestialBody(
-    createVector3D(0, 0, -20),
-    createVector3D(-5, -8, 0),
-    1000
-  )
-];
+
 
 function App() {
   console.log('App gerendert');
@@ -54,8 +37,9 @@ function App() {
   const [showBahnen, setShowBahnen] = useState(false);
   const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>([[], [], []]);
 
-  // State für die Himmelskörper
-  const [bodies, setBodies] = useState<CelestialBodyData[]>(() => initialBodies);
+  // State für die Himmelskörper und ausgewählte Presets
+  const [selectedConditions, setSelectedConditions] = useState(defaultConditions);
+  const [bodies, setBodies] = useState(selectedConditions);
 
   // Animation Loop
   useEffect(() => {
@@ -108,6 +92,16 @@ function App() {
 
   return (
     <div className="app-container">
+      <div className="preset-container">
+        <PresetSelection
+          onSelect={(newBodies) => {
+            setSelectedConditions(newBodies);
+            setBodies(newBodies);
+            setIsRunning(false);
+            setBahnenHistory([[], [], []]);
+          }}
+        />
+      </div>
       <Canvas camera={{ position: [0, 15, 15], fov: 75 }}>
         <Scene 
           bodies={bodies} 
@@ -140,7 +134,7 @@ function App() {
           isRunning={isRunning}
           onToggleRunning={() => setIsRunning(prev => !prev)}
           onReset={() => {
-            setBodies(initialBodies);
+            setBodies(selectedConditions);
             setIsRunning(false);
             // Lösche die Bahnen beim Reset
             setBahnenHistory([[], [], []]);

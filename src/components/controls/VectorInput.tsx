@@ -37,7 +37,7 @@ const VectorInput: React.FC<VectorInputProps> = ({ label, value, onChange, isRun
           value={formatValue(value.x)}
           onChange={(e) => {
             let val = e.target.value;
-            if (val.startsWith('0') && val.length > 1 && val[1] !== ',') {
+            if (val.startsWith('0') && val.length > 1 && val[1] !== '.') {
               val = val.substring(1);
             }
             onChange({ ...value, x: val === '' ? 0 : parseFloat(val) });
@@ -50,7 +50,7 @@ const VectorInput: React.FC<VectorInputProps> = ({ label, value, onChange, isRun
           value={formatValue(value.y)}
           onChange={(e) => {
             let val = e.target.value;
-            if (val.startsWith('0') && val.length > 1 && val[1] !== ',') {
+            if (val.startsWith('0') && val.length > 1 && val[1] !== '.') {
               val = val.substring(1);
             }
             onChange({ ...value, y: val === '' ? 0 : parseFloat(val) });
@@ -63,7 +63,7 @@ const VectorInput: React.FC<VectorInputProps> = ({ label, value, onChange, isRun
           value={formatValue(value.z)}
           onChange={(e) => {
             let val = e.target.value;
-            if (val.startsWith('0') && val.length > 1 && val[1] !== ',') {
+            if (val.startsWith('0') && val.length > 1 && val[1] !== '.') {
               val = val.substring(1);
             }
             onChange({ ...value, z: val === '' ? 0 : parseFloat(val) });

@@ -64,11 +64,10 @@
   background-color: transparent;
 }
 
-/* Styles für den Controls-Container */
-.controls-container {
+/* Styles für den Controls-Container und Preset-Container */
+.controls-container, .preset-container {
   position: absolute;
-  bottom: 0;
-  left: 300px; /* Breite des bodies-container */
+  left: 300px;
   right: 0;
   height: 200px;
   z-index: 10;
@@ -80,40 +79,22 @@
   background-color: transparent;
 }
 
-/* Styles für die Simulation-Controls */
-.simulation-controls {
-  position: relative; /* Änderung von absolute zu relative */
-  bottom: auto; /* Entfernen der absoluten Positionierung */
-  left: auto;
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: auto;
+/* Spezifische Position für den Preset-Container */
+.preset-container {
+  top: 0;
   height: auto;
 }
 
-/* Styles für die Visualization-Controls */
-.visualization-controls {
-  position: relative; /* Änderung von absolute zu relative */
-  bottom: auto; /* Entfernen der absoluten Positionierung */
-  left: auto;
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 8px;
-  display: flex;
-  gap: 10px;
-  width: auto;
-  height: auto;
+/* Spezifische Position für den Controls-Container */
+.controls-container {
+  bottom: 0;
 }
 
+/* Gemeinsame Button-Styles */
 .simulation-controls button,
 .visualization-controls button,
-.camera-controls button {
+.camera-controls button,
+.preset-selection button {
   padding: 8px 16px;
   background-color: rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -128,17 +109,20 @@
 
 .simulation-controls button:hover:not(:disabled),
 .visualization-controls button:hover:not(:disabled),
-.camera-controls button:hover:not(:disabled) {
+.camera-controls button:hover:not(:disabled),
+.preset-selection button:hover:not(:disabled) {
   border-color: white !important;
   color: white;
 }
 
 .simulation-controls button:focus,
 .visualization-controls button:focus,
-.camera-controls button:focus {
+.camera-controls button:focus,
+.preset-selection button:focus {
   outline: none;
 }
 
+/* Aktive/Inaktive Button-Zustände */
 .visualization-controls button.active,
 .camera-controls button.active {
   border-color: rgba(255, 255, 255, 0.8);
@@ -151,6 +135,31 @@
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Control-Panel-Styles */
+.simulation-controls,
+.visualization-controls,
+.camera-controls {
+  position: relative;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  width: auto;
+  height: auto;
+}
+
+.simulation-controls {
+  flex-direction: column;
+}
+
+.camera-controls {
+  flex-direction: row;
+  gap: 20px;
+}
+
+/* Zusätzliche Steuerungselemente */
 .time-step-control {
   display: flex;
   align-items: center;
@@ -162,7 +171,7 @@
 }
 
 .body-controls {
-  padding: 12px; /* Etwas reduziertes Padding */
+  padding: 12px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   flex: 1;
@@ -171,17 +180,17 @@
 }
 
 .body-controls h3 {
-  margin: 0 0 10px 0; /* Reduzierter Abstand */
+  margin: 0 0 10px 0;
   font-size: 1.1em;
 }
 
 .vector-input {
-  margin-bottom: 10px; /* Reduzierter Abstand */
+  margin-bottom: 10px;
 }
 
 .vector-input label {
   display: block;
-  margin-bottom: 4px; /* Reduzierter Abstand */
+  margin-bottom: 4px;
   font-size: 0.9em;
   color: rgba(255, 255, 255, 0.8);
 }
@@ -189,7 +198,7 @@
 .vector-fields {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px; /* Reduzierter Abstand */
+  gap: 6px;
 }
 
 .vector-fields input,
@@ -229,19 +238,5 @@
   margin-bottom: 5px;
   font-size: 0.9em;
   color: rgba(255, 255, 255, 0.8);
-}
-
-/* Styles für die Camera-Controls */
-.camera-controls {
-  position: relative;
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  width: auto;
-  height: auto;
 }
 
