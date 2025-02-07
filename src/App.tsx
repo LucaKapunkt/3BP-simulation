@@ -28,11 +28,22 @@ function App() {
   const [showBahnen, setShowBahnen] = useState(false);
   const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>([[], [], []]);
 
+  // Speichert die Original-Preset-Werte
   const [selectedConditions, setSelectedConditions] = useState(defaultConditions);
+  // Speichert die aktuell angezeigten Werte (inkl. Benutzeränderungen)
   const [bodies, setBodies] = useState(selectedConditions);
+  // Speichert die letzten Benutzereingaben vor dem Start der Simulation
+  const [lastUserInput, setLastUserInput] = useState(selectedConditions);
+
   const [camMode, setCamMode] = useState<CamMode>('default');
   const [selectedBody, setSelectedBody] = useState(1);
 
+  // Aktualisiere lastUserInput wenn die Simulation gestartet wird
+  useEffect(() => {
+    if (isRunning) {
+      setLastUserInput(bodies);
+    }
+  }, [isRunning]);
 
   useEffect(() => {
     if (!isRunning) {
@@ -71,7 +82,6 @@ function App() {
     return () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
-    
   }, [isRunning, bodies, timeStep]);
 
   return (
@@ -79,8 +89,10 @@ function App() {
       <div className="preset-container">
         <PresetSelection
           onSelect={(newBodies) => {
+            // Bei Preset-Auswahl: Setze beide States auf die Original-Preset-Werte
             setSelectedConditions(newBodies);
             setBodies(newBodies);
+            setLastUserInput(newBodies);
             setIsRunning(false);
             setBahnenHistory([[], [], []]);
             setResetCam(true);
@@ -130,7 +142,8 @@ function App() {
           isRunning={isRunning}
           onToggleRunning={() => setIsRunning(prev => !prev)}
           onReset={() => {
-            setBodies(selectedConditions);
+            // Bei Reset: Stelle die letzten Benutzereingaben wieder her
+            setBodies(lastUserInput);
             setIsRunning(false);
             setBahnenHistory([[], [], []]);
             setCamMode('default');
