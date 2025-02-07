@@ -23,9 +23,10 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [resetCam, setResetCam] = useState(false);
 
-  const [showEdges, setShowEdges] = useState(true);
+  const [showEdges, setShowEdges] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
-  const [showBahnen, setShowBahnen] = useState(false);
+  const [showBahnen, setShowBahnen] = useState(true);
+  const [showStars, setShowStars] = useState(false);
   const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>([[], [], []]);
 
   // Speichert die Original-Preset-Werte
@@ -120,6 +121,7 @@ function App() {
           showEdges={showEdges}
           showGrid={showGrid}
           showBahnen={showBahnen}
+          showStars={showStars}
           bahnenHistory={bahnenHistory}
         />
         <OrbitControls
@@ -167,6 +169,8 @@ function App() {
           onToggleGrid={() => setShowGrid(prev => !prev)}
           showBahnen={showBahnen}
           onToggleBahnen={() => setShowBahnen(prev => !prev)}
+          showStars={showStars}
+          onToggleStars={() => setShowStars(prev => !prev)}
         />
         <CameraControls 
           camMode={camMode} 

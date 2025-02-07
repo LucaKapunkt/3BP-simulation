@@ -24,7 +24,7 @@ interface CelestialBodyProps {
 
 const CelestialBody: React.FC<CelestialBodyProps> = ({ position, showEdges, mass, index }) => {
   // Berechne den Radius basierend auf der Masse
-  const radius = Math.pow(mass / 1000, 1/3);
+  const radius = Math.pow(mass / 1000, 1/3) * 0.5;
   const meshRef = useRef<THREE.Mesh>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
 

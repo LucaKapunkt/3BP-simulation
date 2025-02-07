@@ -18,6 +18,8 @@ interface VisualizationControlsProps {
   onToggleGrid: () => void;
   showBahnen: boolean;
   onToggleBahnen: () => void;
+  showStars: boolean;
+  onToggleStars: () => void;
 }
 
 const VisualizationControls: React.FC<VisualizationControlsProps> = ({
@@ -27,17 +29,34 @@ const VisualizationControls: React.FC<VisualizationControlsProps> = ({
   onToggleGrid,
   showBahnen,
   onToggleBahnen,
+  showStars,
+  onToggleStars
 }) => {
   return (
     <div className="visualization-controls">
-      <button onClick={onToggleEdges} className={showEdges ? 'active' : 'inactive'}>
-        Edges
+      <button
+        className={showEdges ? 'active' : 'inactive'}
+        onClick={onToggleEdges}
+      >
+        Kanten
       </button>
-      <button onClick={onToggleBahnen} className={showBahnen ? 'active' : 'inactive'}>
+      <button
+        className={showGrid ? 'active' : 'inactive'}
+        onClick={onToggleGrid}
+      >
+        Gitter
+      </button>
+      <button
+        className={showBahnen ? 'active' : 'inactive'}
+        onClick={onToggleBahnen}
+      >
         Bahnen
       </button>
-      <button onClick={onToggleGrid} className={showGrid ? 'active' : 'inactive'}>
-        Grid
+      <button
+        className={showStars ? 'active' : 'inactive'}
+        onClick={onToggleStars}
+      >
+        Sterne
       </button>
     </div>
   );

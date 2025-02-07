@@ -20,10 +20,11 @@ interface SceneProps {
   showEdges: boolean;
   showGrid: boolean;
   showBahnen: boolean;
+  showStars: boolean;
   bahnenHistory: Vector3D[][];
 }
 
-const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, bahnenHistory }) => {
+const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, showStars, bahnenHistory }) => {
   const colors = ['blue', 'red', 'green'];
   
   // Lade die Hintergrundtextur für den Skydome
@@ -32,13 +33,15 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
   return (
     <>
       {/* Skydome */}
-      <mesh>
-        <sphereGeometry args={[1000, 30, 30]} /> {/* Große Kugel für den Hintergrund */}
-        <meshBasicMaterial
-          map={spaceTexture}
-          side={THREE.BackSide}  // Innenseite der Kugel anzeigen
-        />
-      </mesh>
+      {showStars && (
+        <mesh>
+          <sphereGeometry args={[1000, 30, 30]} />
+          <meshBasicMaterial
+            map={spaceTexture}
+            side={THREE.BackSide}
+          />
+        </mesh>
+      )}
       
       {/* Erhöhe das Umgebungslicht für bessere Grundbeleuchtung */}
       <ambientLight intensity={2.5} />
@@ -46,14 +49,14 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
       {showGrid && (
         <Grid
           args={[1000, 1000]}
-          position={[0, -50, 0]}
+          position={[0, -35, 0]}
           cellSize={1}
           cellThickness={0.5}
           cellColor="#666"
           sectionSize={5}
           sectionThickness={1}
           sectionColor="#aaa"
-          fadeDistance={200}
+          fadeDistance={150}
           fadeStrength={1}
         />
       )}
