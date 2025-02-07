@@ -42,8 +42,9 @@ export interface Vector3D {
     bodyIndex: number,
     bodies: CelestialBodyData[]
   ): Vector3D {
-    console.log('calculateAcceleration aufgerufen für Körper:', bodyIndex);
+    //console.log('calculateAcceleration aufgerufen für Körper:', bodyIndex);
     
+
     const targetBody = bodies[bodyIndex];
     let ax = 0;
     let ay = 0;
@@ -67,8 +68,9 @@ export interface Vector3D {
     }
   
     const result = { x: ax, y: ay, z: az };
-    console.log('calculateAcceleration Ergebnis:', result);
+    //console.log('calculateAcceleration Ergebnis:', result);
     return result;
+
   }
   
   /**
@@ -77,7 +79,7 @@ export interface Vector3D {
    * @returns Die neuen Positionen und Geschwindigkeiten der Körper
    */
   export function calculateNextStep(params: SimulationParameters): SimulationStepResult {
-    console.log('calculateNextStep aufgerufen mit:', params);
+    //console.log('calculateNextStep aufgerufen mit:', params);
     
     const newBodies = params.bodies.map((body, index) => {
       // Beschleunigungen berechnen
@@ -108,7 +110,7 @@ export interface Vector3D {
       velocities: newBodies.map(body => body.velocity)
     };
   
-    console.log('calculateNextStep beendet mit Ergebnissen:', result);
+    //console.log('calculateNextStep beendet mit Ergebnissen:', result);
     return result;
   }
   

@@ -1,78 +1,136 @@
-// src/components/CameraUpdater.tsx
 import { useThree, useFrame } from '@react-three/fiber';
-import React, { useCallback, forwardRef, useImperativeHandle } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import type { Vector3D } from '../simulation/Berechnung';
 import type { CamMode } from './controls/CameraControls';
-
-export interface CameraUpdaterHandle {
-  resetCamera: () => void;
-}
+import type { Vector3D } from '../simulation/Berechnung';
 
 interface CameraUpdaterProps {
   camMode: CamMode;
+  selectedBody: number;
   bodies: { position: Vector3D; velocity: Vector3D }[];
 }
 
-const computeCameraTransform = (camMode: CamMode, bodies: { position: Vector3D; velocity: Vector3D }[]): { position: THREE.Vector3, lookAt: THREE.Vector3 } | null => {
-  // Für den reinen freien Modus ("default") soll nichts berechnet werden.
-  if (camMode === 'default') return null;
+const CameraUpdater: React.FC<CameraUpdaterProps> = ({
+  camMode,
+  selectedBody,
+  bodies
+}) => {
+  const { camera } = useThree();
+  const lastTargetPos = useRef<THREE.Vector3>(new THREE.Vector3());
+  // Neue Refs für die Kamerawinkel und Abstand
+  const sphericalRef = useRef<THREE.Spherical>(new THREE.Spherical(10, Math.PI / 4, 0));
+  const isDraggingRef = useRef(false);
+  const lastMousePosRef = useRef({ x: 0, y: 0 });
 
-  // Bestimme den Zielkörperindex aus dem Zustand (z. B. "FVP 1 auto" → Index 0)
-  const parts = camMode.split(' ');
-  const bodyIndex = parts.length >= 2 ? parseInt(parts[1], 10) - 1 : 0;
-  const target = bodies[bodyIndex];
-  if (!target) return null;
-  const pos = new THREE.Vector3(target.position.x, target.position.y, target.position.z);
+  useEffect(() => {
+    const handleMouseDown = (e: MouseEvent) => {
+      if (camMode === '3VP') {
+        isDraggingRef.current = true;
+        lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+      }
+    };
 
-  if (camMode.startsWith('FVP')) {
-    if (camMode.includes('auto')) {
-      // Auto-Fokus: Blickrichtung in Bewegungsrichtung
-      const { x: vx, y: vy, z: vz } = target.velocity;
-      const len = Math.sqrt(vx * vx + vy * vy + vz * vz) || 1;
-      const lookAt = pos.clone().add(new THREE.Vector3(vx / len, vy / len, vz / len));
-      return { position: pos, lookAt };
-    } else {
-      // FVP ohne Auto: Einfach einen kleinen Offset für den LookAt verwenden
-      const lookAt = pos.clone().add(new THREE.Vector3(1, 0, 0));
-      return { position: pos, lookAt };
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDraggingRef.current && camMode === '3VP') {
+        const deltaX = e.clientX - lastMousePosRef.current.x;
+        const deltaY = e.clientY - lastMousePosRef.current.y;
+
+        // Horizontale Bewegung ändert den Azimuth (theta)
+        sphericalRef.current.theta -= deltaX * 0.01;
+        
+        // Vertikale Bewegung ändert die Elevation (phi)
+        // Negatives Vorzeichen für invertierte Bewegung
+        sphericalRef.current.phi = Math.max(
+          0.1,
+          Math.min(Math.PI - 0.1, sphericalRef.current.phi - deltaY * 0.01)
+        );
+
+        lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+      }
+    };
+
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+    };
+
+    // Neuer Event-Handler für das Mausrad
+    const handleWheel = (e: WheelEvent) => {
+      if (camMode === '3VP') {
+        // Zoom-Geschwindigkeit anpassen
+        const zoomSpeed = 0.03;
+        // Abstand ändern basierend auf Mausrad-Bewegung
+        const newRadius = sphericalRef.current.radius + e.deltaY * zoomSpeed;
+        // Minimal- und Maximalabstand festlegen
+        sphericalRef.current.radius = Math.max(4, Math.min(150, newRadius));
+      }
+    };
+
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('wheel', handleWheel);
+
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, [camMode]);
+
+  useFrame(() => {
+    if (camMode === 'default') return;
+
+    const targetBody = bodies[selectedBody - 1];
+    if (!targetBody) return;
+
+    const targetPos = new THREE.Vector3(
+      targetBody.position.x,
+      targetBody.position.y,
+      targetBody.position.z
+    );
+    // Speichere den targetPos für späteren Gebrauch
+    lastTargetPos.current = targetPos.clone();
+
+    if (camMode === 'FVP') {
+      // First View Perspective: Kamera direkt am Körper
+      camera.position.copy(targetPos);
+      
+      // Berechne Blickrichtung basierend auf der Geschwindigkeit
+      const velocity = new THREE.Vector3(
+        targetBody.velocity.x,
+        targetBody.velocity.y,
+        targetBody.velocity.z
+      );
+      
+      // Normalisiere die Geschwindigkeit und addiere sie zur Position
+      velocity.normalize();
+      const lookAtPos = targetPos.clone().add(velocity);
+      camera.lookAt(lookAtPos);
+    } 
+    else if (camMode === '3VP') {
+      // Berechne die Kameraposition basierend auf den Kugelkoordinaten
+      const cameraOffset = new THREE.Vector3();
+      cameraOffset.setFromSpherical(sphericalRef.current);
+      
+      camera.position.copy(targetPos).add(cameraOffset);
+      camera.lookAt(targetPos);
+      
     }
-  } else if (camMode.startsWith('3VP')) {
-    // 3VP: Fester Offset relativ zum Zielkörper
-    const offset = new THREE.Vector3(0, 5, -10);
-    const newPos = pos.clone().add(offset);
-    return { position: newPos, lookAt: pos };
-  }
+
+    camera.updateProjectionMatrix();
+  });
+
+  // Log beim Moduswechsel
+  useEffect(() => {
+    if (camMode === 'default' && lastTargetPos.current) {
+      // Behalte die aktuelle Position bei, aber schaue auf den letzten bekannten targetPos
+      camera.lookAt(lastTargetPos.current);
+      camera.updateProjectionMatrix();
+    }
+  }, [camMode, camera]);
+
   return null;
 };
 
-const CameraUpdater = forwardRef<CameraUpdaterHandle, CameraUpdaterProps>(({ camMode, bodies }, ref) => {
-  const { camera } = useThree();
-
-  const resetCamera = useCallback(() => {
-    const defaultPos = new THREE.Vector3(0, 15, 15);
-    camera.position.copy(defaultPos);
-    camera.updateProjectionMatrix();
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-  }, [camera]);
-
-  useImperativeHandle(ref, () => ({
-    resetCamera
-  }), [resetCamera]);
-
-  useFrame(() => {
-    // WICHTIG: Wenn der Zustand exakt "default" (Frei) ist, soll die Kamera NICHT neu gesetzt werden.
-    if (camMode === 'default') return;
-
-    const transform = computeCameraTransform(camMode, bodies);
-    if (transform) {
-      camera.position.copy(transform.position);
-      camera.lookAt(transform.lookAt);
-      camera.updateMatrixWorld();
-    }
-  });
-
-  return null;
-});
-
-export default CameraUpdater;
+export default CameraUpdater; 

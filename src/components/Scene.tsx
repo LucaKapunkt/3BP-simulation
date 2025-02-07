@@ -24,7 +24,7 @@ interface SceneProps {
 }
 
 const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, bahnenHistory }) => {
-  console.log('Scene gerendert mit bodies:', bodies);
+  // console.log('Scene gerendert mit bodies:', bodies);
   const colors = ['blue', 'red', 'green'];
 
   return (

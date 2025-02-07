@@ -19,7 +19,7 @@ interface CelestialBodyProps {
 }
 
 const CelestialBody: React.FC<CelestialBodyProps> = ({ position, color, showEdges }) => {
-  console.log('CelestialBody gerendert:', { position, color });
+  // console.log('CelestialBody gerendert:', { position, color });
   return (
     <mesh position={position}>
       <sphereGeometry args={[1, 32, 32]} />

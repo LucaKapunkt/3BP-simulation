@@ -8,17 +8,15 @@ import BodyControls from './components/controls/BodyControls';
 import SimulationControls from './components/controls/SimulationControls';
 import VisualizationControls from './components/controls/VisualizationControls';
 import CameraControls, { CamMode } from './components/controls/CameraControls';
-import CameraUpdater, { CameraUpdaterHandle } from './components/CameraUpdater';
+import CameraUpdater from './components/CameraUpdater';
 import { defaultConditions } from './data/initialConditions';
 import { calculateNextStep, type Vector3D } from './simulation/Berechnung';
 import './styles/App.css';
 
-function App() {
-  console.log('App gerendert');
 
+function App() {
   const [timeStep, setTimeStep] = useState(0.01);
   const animationFrameRef = useRef<number>();
-  const cameraUpdaterRef = useRef<CameraUpdaterHandle>(null);
   const [isRunning, setIsRunning] = useState(false);
 
   const [showEdges, setShowEdges] = useState(true);
@@ -28,9 +26,8 @@ function App() {
 
   const [selectedConditions, setSelectedConditions] = useState(defaultConditions);
   const [bodies, setBodies] = useState(selectedConditions);
-
-  // Zusammengesetzter Zustand für die Kamera
   const [camMode, setCamMode] = useState<CamMode>('default');
+  const [selectedBody, setSelectedBody] = useState(1);
 
   useEffect(() => {
     if (!isRunning) {
@@ -74,7 +71,11 @@ function App() {
         />
       </div>
       <Canvas camera={{ position: [0, 15, 15], fov: 75 }}>
-        <CameraUpdater ref={cameraUpdaterRef} camMode={camMode} bodies={bodies} />
+        <CameraUpdater
+          camMode={camMode}
+          selectedBody={selectedBody}
+          bodies={bodies}
+        />
         <Scene
           bodies={bodies}
           showEdges={showEdges}
@@ -83,9 +84,9 @@ function App() {
           bahnenHistory={bahnenHistory}
         />
         <OrbitControls
-          enableZoom={camMode.startsWith('default') || camMode.startsWith('3VP')}
-          enableRotate={camMode.startsWith('default')}
-          enablePan={camMode.startsWith('default')}
+          enableZoom={camMode === 'default' || camMode === '3VP'}
+          enableRotate={camMode === 'default' || camMode === '3VP'}
+          enablePan={camMode === 'default'}
         />
       </Canvas>
       <div className="bodies-container">
@@ -112,10 +113,8 @@ function App() {
             setBodies(selectedConditions);
             setIsRunning(false);
             setBahnenHistory([[], [], []]);
-            // Kamera zurücksetzen: Setze den zusammengesetzten Zustand auf "default"
             setCamMode('default');
-            // Rufe zusätzlich die resetCamera-Methode im CameraUpdater auf
-            cameraUpdaterRef.current?.resetCamera();
+            setSelectedBody(1);
           }}
           timeStep={timeStep}
           onTimeStepChange={setTimeStep}
@@ -128,7 +127,12 @@ function App() {
           showBahnen={showBahnen}
           onToggleBahnen={() => setShowBahnen(prev => !prev)}
         />
-        <CameraControls camMode={camMode} setCamMode={setCamMode} />
+        <CameraControls 
+          camMode={camMode} 
+          setCamMode={setCamMode}
+          selectedBody={selectedBody}
+          setSelectedBody={setSelectedBody}
+        />
       </div>
     </div>
   );

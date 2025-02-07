@@ -385,13 +385,17 @@ Mit diesem Arbeitsablauf können alle Beteiligten den Entwicklungsprozess schrit
 │   │    │    └─ SimulationControls.tsx
 │   │    │    └─ VisualizationControls.tsx
 │   │    │    └─ CameraControls.tsx
+│   │    │    └─ PresetSelection.tsx
 │   │    │
+│   │    ├─ CameraUpdater.tsx
 │   │    └─ Scene.tsx
 │   │
 │   ├─ simulation/
 │   │    └─ Berechnung.ts
+
 │   │
 │   ├─ styles/
+
 │   │    └─ App.css
 │   │    └─ index.css
 │   │
