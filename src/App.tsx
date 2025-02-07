@@ -18,7 +18,7 @@ function App() {
   // Konstanter, kleiner Zeitschritt für hohe Genauigkeit
   const FIXED_TIMESTEP = 0.001;
   // TimeStep wird jetzt als Multiplikator verwendet
-  const [timeStep, setTimeStep] = useState(1);
+  const [timeStep, setTimeStep] = useState(15);
   const animationFrameRef = useRef<number>();
   const [isRunning, setIsRunning] = useState(false);
   const [resetCam, setResetCam] = useState(false);
@@ -98,6 +98,7 @@ function App() {
             setBahnenHistory([[], [], []]);
             setResetCam(true);
             setCamMode('default');
+            setTimeStep(15);
           }}
         />
       </div>
@@ -158,6 +159,7 @@ function App() {
             setCamMode('default');
             setSelectedBody(1);
             setResetCam(true);
+            setTimeStep(15);
           }}
           timeStep={timeStep}
           onTimeStepChange={setTimeStep}

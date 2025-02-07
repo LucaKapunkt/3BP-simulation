@@ -11,23 +11,23 @@ import { createVector3D, createCelestialBody, type CelestialBodyData } from '../
 
 // Standardkonfiguration
 export const defaultConditions: CelestialBodyData[] = [
-  // Körper 1: Blau
+  // Körper 1: Schwerer zentraler Körper (Blau)
   createCelestialBody(
-    createVector3D(-10, 0, 0),     // Position
-    createVector3D(3.682716, 1.506084, 0),      // Geschwindigkeit * 12
-    1000
+    createVector3D(15, 0, 0),     // Position im Ursprung
+    createVector3D(0, 0, 25),     // Keine Anfangsgeschwindigkeit
+    1000                        // Schwerer Körper
   ),
-  // Körper 2: Rot
+  // Körper 2: Vorbeifliegender Körper
   createCelestialBody(
-    createVector3D(10, 0, 0),      // Position
-    createVector3D(3.682716, 1.506084, 0),     // Geschwindigkeit * 12
-    1000
+    createVector3D(300, 10, 0),    // Startposition auf X-Achse
+    createVector3D(-10, 0, 0),     // Geschwindigkeit in Y-Richtung für Orbit
+    3000                         // Leichter Körper
   ),
-  // Körper 3: Grün
+  // Körper 3: Schwerer zentraler KörperVorbeifliegender Körper (Grün)
   createCelestialBody(
-    createVector3D(0, 0, 10),      // Position
-    createVector3D(-7.365432, -3.012168, 0),     // Geschwindigkeit * 12 (-2*p1, -2*p2)
-    1000
+    createVector3D(0, 0, 0),  // Startet weit entfernt
+    createVector3D(0, 0, -2),  // Geschwindigkeit für nahen Vorbeiflug
+    10000                         // Mittlerer Körper
   )
 ];
 
@@ -52,19 +52,22 @@ export const triangleConditions: CelestialBodyData[] = [
 
 // Chaotische Konfiguration
 export const chaoticConditions: CelestialBodyData[] = [
+  // Körper 1: Blau
   createCelestialBody(
-    createVector3D(-20, 10, 0),
-    createVector3D(3, -2, 1),
+    createVector3D(-10, 0, 0),     // Position
+    createVector3D(3.682716, 1.506084, 0),      // Geschwindigkeit * 12
     1000
   ),
+  // Körper 2: Rot
   createCelestialBody(
-    createVector3D(15, -15, 10),
-    createVector3D(-1, 3, -2),
+    createVector3D(10, 0, 0),      // Position
+    createVector3D(3.682716, 1.506084, 0),     // Geschwindigkeit * 12
     1000
   ),
+  // Körper 3: Grün
   createCelestialBody(
-    createVector3D(5, 5, -10),
-    createVector3D(-2, -1, 1),
+    createVector3D(0, 0, 10),      // Position
+    createVector3D(-7.365432, -3.012168, 0),     // Geschwindigkeit * 12 (-2*p1, -2*p2)
     1000
   )
 ];
