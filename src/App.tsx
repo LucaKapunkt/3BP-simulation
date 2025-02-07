@@ -100,7 +100,14 @@ function App() {
           }}
         />
       </div>
-      <Canvas camera={{ position: [0, 10, 15], fov: 75 }}>
+      <Canvas 
+        camera={{ 
+          position: [0, 10, 15], 
+          fov: 75,
+          near: 0.1,        // Minimale Sichtweite
+          far: 2000         // Maximale Sichtweite
+        }}
+      >
         <CameraUpdater
           camMode={camMode}
           selectedBody={selectedBody}

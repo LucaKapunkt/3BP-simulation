@@ -65,7 +65,7 @@ const CelestialBody: React.FC<CelestialBodyProps> = ({ position, showEdges, mass
           <meshStandardMaterial 
             map={cloudsTexture}
             transparent={true}
-            opacity={0.7}
+            opacity={0.6}
             depthWrite={false}
             emissive={"grey"}
             emissiveMap={cloudsTexture}

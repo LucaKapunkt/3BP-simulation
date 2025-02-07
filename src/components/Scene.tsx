@@ -9,11 +9,11 @@
  */
 
 import React from 'react';
-import { Grid } from '@react-three/drei';
+import { Grid, useTexture } from '@react-three/drei';
 import CelestialBody from './celestial/CelestialBody';
 import Bahn from './celestial/Bahn';
 import { Vector3D, CelestialBodyData } from '../simulation/Berechnung';
-
+import * as THREE from 'three';
 
 interface SceneProps {
   bodies: CelestialBodyData[];
@@ -24,16 +24,25 @@ interface SceneProps {
 }
 
 const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, bahnenHistory }) => {
-  // console.log('Scene gerendert mit bodies:', bodies);
   const colors = ['blue', 'red', 'green'];
+  
+  // Lade die Hintergrundtextur für den Skydome
+  const spaceTexture = useTexture('./assets/stars.jpg');
 
   return (
     <>
-      {/* Erhöhe das Umgebungslicht für bessere Grundbeleuchtung */}
-      <ambientLight intensity={1.5} />
+      {/* Skydome */}
+      <mesh>
+        <sphereGeometry args={[1000, 30, 30]} /> {/* Große Kugel für den Hintergrund */}
+        <meshBasicMaterial
+          map={spaceTexture}
+          side={THREE.BackSide}  // Innenseite der Kugel anzeigen
+        />
+      </mesh>
       
-   
-
+      {/* Erhöhe das Umgebungslicht für bessere Grundbeleuchtung */}
+      <ambientLight intensity={2.5} />
+      
       {showGrid && (
         <Grid
           args={[1000, 1000]}
@@ -44,7 +53,7 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
           sectionSize={5}
           sectionThickness={1}
           sectionColor="#aaa"
-          fadeDistance={150}
+          fadeDistance={200}
           fadeStrength={1}
         />
       )}
