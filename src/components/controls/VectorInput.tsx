@@ -31,7 +31,7 @@ const VectorInput: React.FC<VectorInputProps> = ({ label, value, onChange, isRun
   return (
     <div className="vector-input">
       <label>{label}</label>
-      <div className="vector-fields">
+      <div className={`vector-fields ${isRunning ? 'inactive' : ''}`}>
         <input
           type="number"
           value={formatValue(value.x)}

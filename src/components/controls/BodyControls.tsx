@@ -60,7 +60,6 @@ const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, index, isRu
             const inputValue = e.target.value === '' ? 1 : Math.max(1, parseFloat(e.target.value));
             onChange({ ...body, mass: inputValue * 1000 });
           }}
-          readOnly={isRunning}
         />
       </div>
     </div>
