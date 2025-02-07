@@ -33,15 +33,15 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
       <pointLight position={[10, 10, 10]} />
       {showGrid && (
         <Grid
-          args={[100, 100]}
-          position={[0, -10, 0]}
+          args={[1000, 1000]}
+          position={[0, -50, 0]}
           cellSize={1}
           cellThickness={0.5}
           cellColor="#666"
           sectionSize={5}
           sectionThickness={1}
           sectionColor="#aaa"
-          fadeDistance={50}
+          fadeDistance={150}
           fadeStrength={1}
         />
       )}

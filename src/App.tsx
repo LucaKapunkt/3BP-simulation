@@ -1,14 +1,4 @@
-/**
- * Hauptkomponente der 3-Körper-Problem Simulation
- * 
- * Diese Datei enthält die zentrale App-Komponente, die das gesamte Layout und die Hauptlogik der Anwendung steuert.
- * Sie verwaltet:
- * - Den Simulationszustand (Position und Geschwindigkeit der Himmelskörper)
- * - Die Animations-Loop für die kontinuierliche Berechnung
- * - Die Visualisierungseinstellungen (Gitter, Kanten, Bahnen)
- * - Die Benutzeroberfläche mit Canvas und Steuerungselementen
- */
-
+// src/App.tsx
 import { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -17,47 +7,38 @@ import PresetSelection from './components/controls/PresetSelection';
 import BodyControls from './components/controls/BodyControls';
 import SimulationControls from './components/controls/SimulationControls';
 import VisualizationControls from './components/controls/VisualizationControls';
-import CameraControls from './components/controls/CameraControls';
+import CameraControls, { CamMode } from './components/controls/CameraControls';
+import CameraUpdater, { CameraUpdaterHandle } from './components/CameraUpdater';
 import { defaultConditions } from './data/initialConditions';
 import { calculateNextStep, type Vector3D } from './simulation/Berechnung';
 import './styles/App.css';
-
-
 
 function App() {
   console.log('App gerendert');
 
   const [timeStep, setTimeStep] = useState(0.01);
   const animationFrameRef = useRef<number>();
+  const cameraUpdaterRef = useRef<CameraUpdaterHandle>(null);
   const [isRunning, setIsRunning] = useState(false);
 
-  // Visualization Parameters
   const [showEdges, setShowEdges] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
   const [showBahnen, setShowBahnen] = useState(false);
   const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>([[], [], []]);
 
-  // State für die Himmelskörper und ausgewählte Presets
   const [selectedConditions, setSelectedConditions] = useState(defaultConditions);
   const [bodies, setBodies] = useState(selectedConditions);
 
-  // Animation Loop
+  // Zusammengesetzter Zustand für die Kamera
+  const [camMode, setCamMode] = useState<CamMode>('default');
+
   useEffect(() => {
     if (!isRunning) {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       return;
     }
-
     const animate = () => {
-      // Berechne den nächsten Schritt
-      const nextStep = calculateNextStep({
-        bodies,
-        timeStep
-      });
-
-      // Aktualisiere die Körper mit den neuen Positionen und Geschwindigkeiten
+      const nextStep = calculateNextStep({ bodies, timeStep });
       setBodies(prevBodies =>
         prevBodies.map((body, index) => ({
           ...body,
@@ -65,28 +46,18 @@ function App() {
           velocity: nextStep.velocities[index]
         }))
       );
-
-      // Aktualisiere die Positionshistorie für die Bahnen
       setBahnenHistory(prevHistory => {
         const newHistory = prevHistory.map((bodyHistory, index) => {
-          // Begrenze die Historie auf 1000 Punkte pro Körper
           const limitedHistory = [...bodyHistory.slice(-999), nextStep.positions[index]];
           return limitedHistory;
         });
         return newHistory;
       });
-
-      // Nächster Frame
       animationFrameRef.current = requestAnimationFrame(animate);
     };
-
     animationFrameRef.current = requestAnimationFrame(animate);
-
-    // Cleanup
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
   }, [isRunning, bodies, timeStep]);
 
@@ -103,14 +74,19 @@ function App() {
         />
       </div>
       <Canvas camera={{ position: [0, 15, 15], fov: 75 }}>
-        <Scene 
-          bodies={bodies} 
+        <CameraUpdater ref={cameraUpdaterRef} camMode={camMode} bodies={bodies} />
+        <Scene
+          bodies={bodies}
           showEdges={showEdges}
           showGrid={showGrid}
           showBahnen={showBahnen}
           bahnenHistory={bahnenHistory}
         />
-        <OrbitControls />
+        <OrbitControls
+          enableZoom={camMode.startsWith('default') || camMode.startsWith('3VP')}
+          enableRotate={camMode.startsWith('default')}
+          enablePan={camMode.startsWith('default')}
+        />
       </Canvas>
       <div className="bodies-container">
         {bodies.map((body, index) => (
@@ -121,7 +97,6 @@ function App() {
               const newBodies = [...bodies];
               newBodies[index] = newBody;
               setBodies(newBodies);
-              // Lösche die Bahnen beim Ändern der Körper
               setBahnenHistory([[], [], []]);
             }}
             bodyName={`Körper ${index + 1}`}
@@ -136,13 +111,16 @@ function App() {
           onReset={() => {
             setBodies(selectedConditions);
             setIsRunning(false);
-            // Lösche die Bahnen beim Reset
             setBahnenHistory([[], [], []]);
+            // Kamera zurücksetzen: Setze den zusammengesetzten Zustand auf "default"
+            setCamMode('default');
+            // Rufe zusätzlich die resetCamera-Methode im CameraUpdater auf
+            cameraUpdaterRef.current?.resetCamera();
           }}
           timeStep={timeStep}
           onTimeStepChange={setTimeStep}
         />
-        <VisualizationControls 
+        <VisualizationControls
           showEdges={showEdges}
           onToggleEdges={() => setShowEdges(prev => !prev)}
           showGrid={showGrid}
@@ -150,7 +128,7 @@ function App() {
           showBahnen={showBahnen}
           onToggleBahnen={() => setShowBahnen(prev => !prev)}
         />
-        <CameraControls />
+        <CameraControls camMode={camMode} setCamMode={setCamMode} />
       </div>
     </div>
   );

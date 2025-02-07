@@ -1,69 +1,121 @@
-/**
- * Steuerungskomponente für die Kameraeinstellungen
- * 
- * Ermöglicht die Anpassung verschiedener Kameraparameter:
- * - Kameraposition (Frei, First-Person-View, Third-Person-View)
- * - Fokuspunkt der Kamera (Körper, Bewegungsrichtung, Ursprung)
- * - Auswahl des zu verfolgenden Himmelskörpers
- * 
- * Die verfügbaren Optionen passen sich dynamisch an die gewählte Kameraposition an.
- */
+// src/components/controls/CameraControls.tsx
+import React from 'react';
 
-import React, { useState, useEffect } from 'react';
+export type CamMode =
+  | 'default'
+  | 'default 1'
+  | 'default 2'
+  | 'default 3'
+  | 'FVP 1'
+  | 'FVP 2'
+  | 'FVP 3'
+  | 'FVP 1 auto'
+  | 'FVP 2 auto'
+  | 'FVP 3 auto'
+  | '3VP 1'
+  | '3VP 2'
+  | '3VP 3';
 
-const CameraControls: React.FC = () => {
-  const [camPos, setCamPos] = useState<'Frei' | 'FPV' | '3PV'>('Frei');
-  const [camFokus, setCamFokus] = useState<'Ohne' | 'Körper 1' | 'Körper 2' | 'Körper 3' | 'Bewegungsrichtung' | 'Ursprung'>('Ursprung');
-  const [camKoerper, setCamKoerper] = useState<1 | 2 | 3>(1);
+interface CameraControlsProps {
+  camMode: CamMode;
+  setCamMode: React.Dispatch<React.SetStateAction<CamMode>>;
+}
 
-  const handleFokusChange = () => {
-    setCamFokus(prev => {
-      if (camPos === 'FPV' || camPos === '3PV') {
-        return prev === 'Ohne' ? 'Bewegungsrichtung' : 'Ohne';
-      } else {
-        switch(prev) {
-          case 'Ohne': return 'Körper 1';
-          case 'Körper 1': return 'Körper 2';
-          case 'Körper 2': return 'Körper 3';
-          case 'Körper 3': return 'Ursprung';
-          case 'Ursprung': return 'Ohne';
-          default: return 'Ohne';
-        }
-      }
-    });
+const CameraControls: React.FC<CameraControlsProps> = ({ camMode, setCamMode }) => {
+  // Hilfsfunktion zur Extraktion des Körperindexes (0-2)
+  const getBodyIndex = (): number => {
+    const parts = camMode.split(' ');
+    return parts.length >= 2 ? parseInt(parts[1], 10) - 1 : 0;
   };
 
-  useEffect(() => {
-    if (camPos === 'Frei') {
-      setCamFokus('Ohne');
-    } else if (camPos === 'FPV' || camPos === '3PV') {
-      setCamFokus('Bewegungsrichtung');
+  // Handler für den Positions-Button
+  const handlePositionClick = () => {
+    const bodyIdx = getBodyIndex() + 1; // Körpernummer (1-3)
+    if (camMode.startsWith('default')) {
+      // Wechsel zu FVP mit auto-Fokus
+      setCamMode(`FVP ${bodyIdx} auto` as CamMode);
+    } else if (camMode.startsWith('FVP')) {
+      // Wechsel zu 3VP
+      setCamMode(`3VP ${bodyIdx}` as CamMode);
+    } else {
+      // Wechsel zurück zu default
+      setCamMode('default');
     }
-  }, [camPos]);
+  };
+
+  // Handler für den Körper-Button (nur aktiv in FVP und 3VP)
+  const handleBodyClick = () => {
+    if (camMode.startsWith('default')) return;
+    const current = getBodyIndex();
+    const next = (current + 1) % 3; // Zyklisch 0,1,2
+    if (camMode.startsWith('FVP')) {
+      setCamMode((`FVP ${next + 1}${camMode.includes('auto') ? ' auto' : ''}`) as CamMode);
+    } else if (camMode.startsWith('3VP')) {
+      setCamMode(`3VP ${next + 1}` as CamMode);
+    }
+  };
+
+  // Handler für den Fokus-Button
+  const handleFokusClick = () => {
+    if (camMode.startsWith('3VP')) return; // Fokus-Button deaktiviert in 3VP
+    if (camMode.startsWith('FVP')) {
+      // Toggle in FVP zwischen auto und non-auto
+      const parts = camMode.split(' ');
+      if (camMode.includes('auto')) {
+        setCamMode(`FVP ${parts[1]}` as CamMode);
+      } else {
+        setCamMode(`FVP ${parts[1]} auto` as CamMode);
+      }
+    } else if (camMode.startsWith('default')) {
+      // Zyklischer Wechsel in default: "default" -> "default 1" -> "default 2" -> "default 3" -> "default"
+      if (camMode === 'default') {
+        setCamMode('default 1');
+      } else if (camMode === 'default 1') {
+        setCamMode('default 2');
+      } else if (camMode === 'default 2') {
+        setCamMode('default 3');
+      } else {
+        setCamMode('default');
+      }
+    }
+  };
 
   return (
     <div className="camera-controls">
-      <button 
-          onClick={() => {
-            setCamPos(prev => {
-              if (prev === 'Frei') return 'FPV';
-              if (prev === 'FPV') return '3PV';
-              return 'Frei';
-            });
-          }}
-        >
-          Position: {camPos}
-        </button>
-        <button 
-          onClick={() => setCamKoerper(prev => prev === 3 ? 1 : (prev + 1) as 2 | 3)}
-          className={camPos === 'Frei' ? 'inactive' : ''}
-          disabled={camPos === 'Frei'}
-        >
-          Körper {camKoerper}
-        </button>
-        <button onClick={handleFokusChange}>
-          Fokus: {camFokus}
-        </button>
+      <button onClick={handlePositionClick}>
+        Position: {camMode.startsWith('default')
+          ? 'Frei'
+          : camMode.startsWith('FVP')
+          ? 'FVP'
+          : '3VP'}
+      </button>
+      <button
+        onClick={handleBodyClick}
+        disabled={camMode.startsWith('default')}
+        className={camMode.startsWith('default') ? 'inactive' : ''}
+      >
+        Körper: {camMode.startsWith('default') ? '-' : getBodyIndex() + 1}
+      </button>
+      <button
+        onClick={handleFokusClick}
+        disabled={camMode.startsWith('3VP')}
+        className={camMode.startsWith('3VP') ? 'inactive' : ''}
+      >
+        Fokus:{' '}
+        {camMode.startsWith('FVP')
+          ? camMode.includes('auto')
+            ? 'Bewegungsrichtung'
+            : 'Ohne'
+          : camMode.startsWith('default')
+          ? camMode === 'default'
+            ? 'Ohne'
+            : camMode === 'default 1'
+            ? 'Körper 1'
+            : camMode === 'default 2'
+            ? 'Körper 2'
+            : 'Körper 3'
+          : ''}
+      </button>
     </div>
   );
 };
