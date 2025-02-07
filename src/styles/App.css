@@ -1,0 +1,250 @@
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  position: relative;
+}
+
+/* Styles für die Body-Controls */
+.bodies-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  z-index: 10;
+  padding: 30px;
+  gap: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+}
+
+/* Styles für den Controls-Container und Preset-Container */
+.controls-container, .preset-container {
+  position: absolute;
+  left: 300px;
+  right: 0;
+  height: auto;
+  z-index: 10;
+  padding: 25px;
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: transparent;
+}
+
+/* Spezifische Position für den Preset-Container */
+.preset-container {
+  top: 0;
+}
+
+/* Spezifische Position für den Controls-Container */
+.controls-container {
+  bottom: 0;
+  padding-bottom: 10px;
+}
+
+/* Gemeinsame Button-Styles */
+.simulation-controls button,
+.visualization-controls button,
+.camera-controls button,
+.preset-selection button {
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-right: 10px;
+  font-weight: 500;
+  outline: none;
+}
+
+.simulation-controls button:hover:not(:disabled),
+.visualization-controls button:hover:not(:disabled),
+.camera-controls button:hover:not(:disabled),
+.preset-selection button:hover:not(:disabled) {
+  border-color: white !important;
+  color: white;
+}
+
+.simulation-controls button:focus,
+.visualization-controls button:focus,
+.camera-controls button:focus,
+.preset-selection button:focus {
+  outline: none;
+}
+
+/* Aktive/Inaktive Button-Zustände */
+.visualization-controls button.active,
+.camera-controls button.active {
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.visualization-controls button.inactive,
+.camera-controls button.inactive {
+  color: rgba(255, 255, 255, 0.3); 
+  background-color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Control-Panel-Styles */
+.simulation-controls,
+.visualization-controls,
+.camera-controls {
+  position: relative;
+  background-color: transparent;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  width: auto;
+  height: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.simulation-controls {
+  flex-direction: row;
+}
+
+.camera-controls {
+  flex-direction: row;
+  gap: 20px;
+}
+
+/* Zusätzliche Steuerungselemente */
+.time-step-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-step-control input[type="range"] {
+  flex: 1;
+}
+
+.body-controls {
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.body-controls h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1em;
+}
+
+.vector-input {
+  margin-bottom: 10px;
+}
+
+.vector-input label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.vector-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.vector-fields input,
+.mass-input input {
+  width: 100%;
+  padding: 4px 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: white;
+  font-size: 0.9em;
+}
+
+.vector-fields.inactive input {
+  color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Entfernt die Pfeile für Chrome, Safari, Edge, Opera */
+.vector-fields input::-webkit-outer-spin-button,
+.vector-fields input::-webkit-inner-spin-button,
+.mass-input input::-webkit-outer-spin-button,
+.mass-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Entfernt die Pfeile für Firefox */
+.vector-fields input[type=number],
+.mass-input input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.vector-fields input:focus,
+.mass-input input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.mass-input label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.8);
+}
+

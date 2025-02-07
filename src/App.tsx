@@ -1,287 +1,135 @@
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Grid, Edges } from '@react-three/drei'
-import { useState, useEffect, useRef } from 'react'
-import './App.css'
-import { calculateNextStep, createVector3D, createCelestialBody, type CelestialBodyData, type Vector3D } from './berechnung'
+// src/App.tsx
+import { useState, useEffect, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import Scene from './components/Scene';
+import PresetSelection from './components/controls/PresetSelection';
+import BodyControls from './components/controls/BodyControls';
+import SimulationControls from './components/controls/SimulationControls';
+import VisualizationControls from './components/controls/VisualizationControls';
+import CameraControls, { CamMode } from './components/controls/CameraControls';
+import CameraUpdater from './components/CameraUpdater';
+import { defaultConditions } from './data/initialConditions';
+import { calculateNextStep, type Vector3D } from './simulation/Berechnung';
+import './styles/App.css';
 
-// Komponente für einen einzelnen Himmelskörper
-const CelestialBody: React.FC<{ position: [number, number, number], color: string, showEdges: boolean }> = ({ position, color, showEdges }) => {
-  console.log('CelestialBody gerendert:', { position, color })
-  return (
-    <mesh position={position}>
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial color={color} />
-      {showEdges && (
-        <Edges
-          scale={1}
-          threshold={1}
-          color="white"
-        />
-      )}
-    </mesh>
-  )
-}
-
-// Komponente für die Eingabe eines 3D-Vektors
-const VectorInput: React.FC<{
-  label: string;
-  value: Vector3D;
-  onChange: (newValue: Vector3D) => void;
-}> = ({ label, value, onChange }) => {
-  return (
-    <div className="vector-input">
-      <label>{label}</label>
-      <div className="vector-fields">
-        <input
-          type="number"
-          value={value.x}
-          onChange={(e) => onChange({ ...value, x: parseFloat(e.target.value) || 0 })}
-          placeholder="X"
-        />
-        <input
-          type="number"
-          value={value.y}
-          onChange={(e) => onChange({ ...value, y: parseFloat(e.target.value) || 0 })}
-          placeholder="Y"
-        />
-        <input
-          type="number"
-          value={value.z}
-          onChange={(e) => onChange({ ...value, z: parseFloat(e.target.value) || 0 })}
-          placeholder="Z"
-        />
-      </div>
-    </div>
-  )
-}
-
-// Komponente für die Steuerung eines einzelnen Himmelskörpers
-const BodyControls: React.FC<{
-  body: CelestialBodyData;
-  onChange: (newBody: CelestialBodyData) => void;
-  bodyName: string;
-}> = ({ body, onChange, bodyName }) => {
-  return (
-    <div className="body-controls">
-      <h3>{bodyName}</h3>
-      <VectorInput
-        label="Position"
-        value={body.position}
-        onChange={(newPosition) => onChange({ ...body, position: newPosition })}
-      />
-      <VectorInput
-        label="Geschwindigkeit"
-        value={body.velocity}
-        onChange={(newVelocity) => onChange({ ...body, velocity: newVelocity })}
-      />
-      <div className="mass-input">
-        <label>Masse</label>
-        <input
-          type="number"
-          value={body.mass}
-          onChange={(e) => onChange({ ...body, mass: parseFloat(e.target.value) || 0 })}
-          min="0"
-        />
-      </div>
-    </div>
-  )
-}
-
-// Komponente für das Kontrollpanel
-const ControlPanel: React.FC<{
-  bodies: CelestialBodyData[];
-  onBodiesChange: (newBodies: CelestialBodyData[]) => void;
-  isRunning: boolean;
-  onToggleRunning: () => void;
-  onReset: () => void;
-  timeStep: number;
-  onTimeStepChange: (newTimeStep: number) => void;
-}> = ({ bodies, onBodiesChange, isRunning, onToggleRunning, onReset, timeStep, onTimeStepChange }) => {
-  return (
-    <div className="simulation-controls">
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button onClick={onToggleRunning}>
-          {isRunning ? 'Pause' : 'Start'}
-        </button>
-        <button onClick={onReset}>Reset</button>
-      </div>
-      <div className="time-step-control">
-        <label>Zeitschritt:</label>
-        <input
-          type="range"
-          min="0.001"
-          max="0.1"
-          step="0.001"
-          value={timeStep}
-          onChange={(e) => onTimeStepChange(parseFloat(e.target.value))}
-        />
-        <span>{timeStep.toFixed(3)}</span>
-      </div>
-    </div>
-  )
-}
-
-// Komponente für die Visualisierungs-Steuerung
-const VisualizationControls: React.FC<{
-  showEdges: boolean;
-  onToggleEdges: () => void;
-  showGrid: boolean;
-  onToggleGrid: () => void;
-}> = ({ showEdges, onToggleEdges, showGrid, onToggleGrid }) => {
-  return (
-    <div className="visualization-controls">
-      <button 
-        onClick={onToggleEdges}
-        className={showEdges ? 'active' : 'inactive'}
-      >
-        Edges
-      </button>
-      <button>Bahnen</button>
-      <button 
-        onClick={onToggleGrid}
-        className={showGrid ? 'active' : 'inactive'}
-      >
-        Grid
-      </button>
-    </div>
-  )
-}
-
-// Hauptkomponente für die 3D-Szene
-const Scene: React.FC<{ 
-  bodies: CelestialBodyData[];
-  showEdges: boolean;
-  showGrid: boolean;
-}> = ({ bodies, showEdges, showGrid }) => {
-  console.log('Scene gerendert mit bodies:', bodies)
-  return (
-    <>
-      {/* Umgebungslicht für bessere Sichtbarkeit */}
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      
-      {/* Koordinatensystem */}
-      {showGrid && (
-        <Grid
-          args={[100, 100]}
-          position={[0, -10, 0]}
-          cellSize={1}
-          cellThickness={0.5}
-          cellColor="#666"
-          sectionSize={5}
-          sectionThickness={1}
-          sectionColor="#aaa"
-          fadeDistance={50}
-          fadeStrength={1}
-        />
-      )}
-      
-      {/* Die drei Himmelskörper */}
-      {bodies.map((body, index) => {
-        const position: [number, number, number] = [
-          body.position.x,
-          body.position.y,
-          body.position.z
-        ]
-        const colors = ['blue', 'red', 'green']
-        return (
-          <CelestialBody
-            key={index}
-            position={position}
-            color={colors[index]}
-            showEdges={showEdges}
-          />
-        )
-      })}
-    </>
-  )
-}
-
-// Anfangszustand der Simulation
-const initialBodies: CelestialBodyData[] = [
-  // Körper 1: Blau
-  createCelestialBody(
-    createVector3D(-4, 0, 0),  // Position
-    createVector3D(0, 0.5, 0), // Geschwindigkeit
-    1000                       // Masse
-  ),
-  // Körper 2: Rot
-  createCelestialBody(
-    createVector3D(0, 0, 0),   // Position
-    createVector3D(0, 0, 0),   // Geschwindigkeit
-    2000                       // Masse
-  ),
-  // Körper 3: Grün
-  createCelestialBody(
-    createVector3D(4, 0, 0),   // Position
-    createVector3D(0, -0.5, 0),// Geschwindigkeit
-    1000                       // Masse
-  )
-]
 
 function App() {
-  console.log('App gerendert')
+  // Konstanter, kleiner Zeitschritt für hohe Genauigkeit
+  const FIXED_TIMESTEP = 0.001;
+  // TimeStep wird jetzt als Multiplikator verwendet
+  const [timeStep, setTimeStep] = useState(15);
+  const animationFrameRef = useRef<number>();
+  const [isRunning, setIsRunning] = useState(false);
+  const [resetCam, setResetCam] = useState(false);
 
-  // Simulation Parameters
-  const [timeStep, setTimeStep] = useState(0.01)
-  const animationFrameRef = useRef<number>()
-  const [isRunning, setIsRunning] = useState(false)
+  const [showEdges, setShowEdges] = useState(false);
+  const [showGrid, setShowGrid] = useState(true);
+  const [showBahnen, setShowBahnen] = useState(true);
+  const [showStars, setShowStars] = useState(false);
+  const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>([[], [], []]);
 
-  // Visualization Parameters
-  const [showEdges, setShowEdges] = useState(true)
-  const [showGrid, setShowGrid] = useState(true)
+  // Speichert die Original-Preset-Werte
+  const [selectedConditions, setSelectedConditions] = useState(defaultConditions);
+  // Speichert die aktuell angezeigten Werte (inkl. Benutzeränderungen)
+  const [bodies, setBodies] = useState(selectedConditions);
+  // Speichert die letzten Benutzereingaben vor dem Start der Simulation
+  const [lastUserInput, setLastUserInput] = useState(selectedConditions);
 
-  // State für die Himmelskörper
-  const [bodies, setBodies] = useState<CelestialBodyData[]>(() => initialBodies)
+  const [camMode, setCamMode] = useState<CamMode>('default');
+  const [selectedBody, setSelectedBody] = useState(1);
 
-  // Animation Loop
+  // Aktualisiere lastUserInput wenn die Simulation gestartet wird
+  useEffect(() => {
+    if (isRunning) {
+      setLastUserInput(bodies);
+    }
+  }, [isRunning]);
+
   useEffect(() => {
     if (!isRunning) {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      return
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      return;
     }
-
     const animate = () => {
-      // Berechne den nächsten Schritt
-      const nextStep = calculateNextStep({
-        bodies,
-        timeStep
-      })
-
-      // Aktualisiere die Körper mit den neuen Positionen und Geschwindigkeiten
-      setBodies(prevBodies => 
-        prevBodies.map((body, index) => ({
+      // Führe mehrere Berechnungsschritte durch
+      let currentBodies = bodies;
+      const steps = Math.round(timeStep);
+      
+      for (let i = 0; i < steps; i++) {
+        const nextStep = calculateNextStep({ bodies: currentBodies, timeStep: FIXED_TIMESTEP });
+        currentBodies = currentBodies.map((body, index) => ({
           ...body,
           position: nextStep.positions[index],
           velocity: nextStep.velocities[index]
-        }))
-      )
-
-      // Nächster Frame
-      animationFrameRef.current = requestAnimationFrame(animate)
-    }
-
-    animationFrameRef.current = requestAnimationFrame(animate)
-
-    // Cleanup
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
+        }));
       }
-    }
-  }, [isRunning, bodies, timeStep])
+
+      // Aktualisiere den State nur mit dem letzten Ergebnis
+      setBodies(currentBodies);
+      
+      // Aktualisiere die Bahnhistorie
+      setBahnenHistory(prevHistory => {
+        const newHistory = prevHistory.map((bodyHistory, index) => {
+          const limitedHistory = [...bodyHistory.slice(-999), currentBodies[index].position];
+          return limitedHistory;
+        });
+        return newHistory;
+      });
+
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+    animationFrameRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [isRunning, bodies, timeStep]);
 
   return (
     <div className="app-container">
-      <Canvas camera={{ position: [0, 15, 15], fov: 75 }}>
-        <Scene 
-          bodies={bodies} 
+      <div className="preset-container">
+        <PresetSelection
+          onSelect={(newBodies) => {
+            // Bei Preset-Auswahl: Setze beide States auf die Original-Preset-Werte
+            setSelectedConditions(newBodies);
+            setBodies(newBodies);
+            setLastUserInput(newBodies);
+            setIsRunning(false);
+            setBahnenHistory([[], [], []]);
+            setResetCam(true);
+            setCamMode('default');
+            setTimeStep(15);
+          }}
+        />
+      </div>
+      <Canvas 
+        camera={{ 
+          position: [0, 10, 15], 
+          fov: 75,
+          near: 0.1,        // Minimale Sichtweite
+          far: 2000         // Maximale Sichtweite
+        }}
+      >
+        <CameraUpdater
+          camMode={camMode}
+          selectedBody={selectedBody}
+          bodies={bodies}
+          resetCam={resetCam}
+          setResetCam={setResetCam}
+        />
+        <Scene
+          bodies={bodies}
           showEdges={showEdges}
           showGrid={showGrid}
+          showBahnen={showBahnen}
+          showStars={showStars}
+          bahnenHistory={bahnenHistory}
         />
-        <OrbitControls />
+        <OrbitControls
+          enableZoom={camMode === 'default' || camMode === '3VP'}
+          enableRotate={camMode === 'default' || camMode === '3VP'}
+          enablePan={camMode === 'default'}
+        />
       </Canvas>
       <div className="bodies-container">
         {bodies.map((body, index) => (
@@ -292,33 +140,49 @@ function App() {
               const newBodies = [...bodies];
               newBodies[index] = newBody;
               setBodies(newBodies);
+              setBahnenHistory([[], [], []]);
             }}
-            bodyName={`Körper ${index + 1}`}
+            index={index}
+            isRunning={isRunning}
           />
         ))}
       </div>
       <div className="controls-container">
-        <ControlPanel
-          bodies={bodies}
-          onBodiesChange={setBodies}
+        <SimulationControls
           isRunning={isRunning}
           onToggleRunning={() => setIsRunning(prev => !prev)}
           onReset={() => {
-            setBodies(initialBodies);
+            // Bei Reset: Stelle die letzten Benutzereingaben wieder her
+            setBodies(lastUserInput);
             setIsRunning(false);
+            setBahnenHistory([[], [], []]);
+            setCamMode('default');
+            setSelectedBody(1);
+            setResetCam(true);
+            setTimeStep(15);
           }}
           timeStep={timeStep}
           onTimeStepChange={setTimeStep}
         />
-        <VisualizationControls 
+        <VisualizationControls
           showEdges={showEdges}
           onToggleEdges={() => setShowEdges(prev => !prev)}
           showGrid={showGrid}
           onToggleGrid={() => setShowGrid(prev => !prev)}
+          showBahnen={showBahnen}
+          onToggleBahnen={() => setShowBahnen(prev => !prev)}
+          showStars={showStars}
+          onToggleStars={() => setShowStars(prev => !prev)}
+        />
+        <CameraControls 
+          camMode={camMode} 
+          setCamMode={setCamMode}
+          selectedBody={selectedBody}
+          setSelectedBody={setSelectedBody}
         />
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
