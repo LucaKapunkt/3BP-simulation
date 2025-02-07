@@ -150,7 +150,7 @@
 }
 
 .simulation-controls {
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .camera-controls {

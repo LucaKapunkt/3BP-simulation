@@ -8,12 +8,16 @@ interface CameraUpdaterProps {
   camMode: CamMode;
   selectedBody: number;
   bodies: { position: Vector3D; velocity: Vector3D }[];
+  resetCam: boolean;
+  setResetCam: (value: boolean) => void;
 }
 
 const CameraUpdater: React.FC<CameraUpdaterProps> = ({
   camMode,
   selectedBody,
-  bodies
+  bodies,
+  resetCam,
+  setResetCam
 }) => {
   const { camera } = useThree();
   const lastTargetPos = useRef<THREE.Vector3>(new THREE.Vector3());
@@ -56,12 +60,14 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
     // Neuer Event-Handler für das Mausrad
     const handleWheel = (e: WheelEvent) => {
       if (camMode === '3VP') {
-        // Zoom-Geschwindigkeit anpassen
-        const zoomSpeed = 0.03;
+        // Dynamische Zoom-Geschwindigkeit basierend auf aktuellem Radius
+        // Je näher an den Körper, desto feinfühliger wird die Steuerung
+        const zoomSpeed = Math.min(0.07,sphericalRef.current.radius ** 2 * 0.0001);
+        console.log(zoomSpeed, sphericalRef.current.radius);
         // Abstand ändern basierend auf Mausrad-Bewegung
         const newRadius = sphericalRef.current.radius + e.deltaY * zoomSpeed;
         // Minimal- und Maximalabstand festlegen
-        sphericalRef.current.radius = Math.max(4, Math.min(150, newRadius));
+        sphericalRef.current.radius = Math.max(2, Math.min(250, newRadius));
       }
     };
 
@@ -79,7 +85,15 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
   }, [camMode]);
 
   useFrame(() => {
-    if (camMode === 'default') return;
+    if (camMode === 'default') {
+      if (resetCam) {
+        camera.position.set(0, 10, 15);
+        camera.lookAt(0, 0, 0);
+        camera.updateProjectionMatrix();
+        setResetCam(false);
+      }
+      return;
+    }
 
     const targetBody = bodies[selectedBody - 1];
     if (!targetBody) return;

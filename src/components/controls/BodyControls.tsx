@@ -18,7 +18,7 @@ interface BodyControlsProps {
   onChange: (newBody: CelestialBodyData) => void;
   bodyName: string;
   isRunning: boolean;
-}
+    }
 
 const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, bodyName, isRunning }) => {
   return (
@@ -40,8 +40,12 @@ const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, bodyName, i
         <label>Masse</label>
         <input
           type="number"
-          value={isRunning ? body.mass.toFixed(2) : body.mass}
-          onChange={(e) => onChange({ ...body, mass: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
+          min="1"
+          value={Number.isInteger(body.mass / 1000) ? body.mass / 1000 : (body.mass / 1000).toFixed(1)}
+          onChange={(e) => {
+            const inputValue = e.target.value === '' ? 1 : Math.max(1, parseFloat(e.target.value));
+            onChange({ ...body, mass: inputValue * 1000 });
+          }}
           readOnly={isRunning}
         />
       </div>

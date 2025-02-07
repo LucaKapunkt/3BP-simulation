@@ -55,7 +55,13 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
           body.position.z
         ];
         return (
-          <CelestialBody key={index} position={position} color={colors[index]} showEdges={showEdges} />
+          <CelestialBody 
+            key={index} 
+            position={position} 
+            color={colors[index]} 
+            showEdges={showEdges}
+            mass={body.mass}
+          />
         );
       })}
     </>

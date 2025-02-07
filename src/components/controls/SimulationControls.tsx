@@ -16,7 +16,7 @@ interface SimulationControlsProps {
   onToggleRunning: () => void;
   onReset: () => void;
   timeStep: number;
-  onTimeStepChange: (newTimeStep: number) => void;
+  onTimeStepChange: (value: number) => void;
 }
 
 const SimulationControls: React.FC<SimulationControlsProps> = ({
@@ -28,23 +28,20 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
 }) => {
   return (
     <div className="simulation-controls">
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button onClick={onToggleRunning}>
-          {isRunning ? 'Pause' : 'Start'}
-        </button>
-        <button onClick={onReset}>Reset</button>
-      </div>
+      <button onClick={onToggleRunning}>
+        {isRunning ? 'Pause' : 'Start'}
+      </button>
+      <button onClick={onReset}>Reset</button>
       <div className="time-step-control">
-        <label>Zeitschritt:</label>
+        <label>Geschwindigkeit: {timeStep}x</label>
         <input
           type="range"
-          min="0.001"
-          max="0.1"
-          step="0.001"
+          min="1"
+          max="50"
+          step="1"
           value={timeStep}
-          onChange={(e) => onTimeStepChange(parseFloat(e.target.value))}
+          onChange={(e) => onTimeStepChange(Number(e.target.value))}
         />
-        <span>{timeStep.toFixed(3)}</span>
       </div>
     </div>
   );

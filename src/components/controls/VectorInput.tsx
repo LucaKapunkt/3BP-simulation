@@ -20,12 +20,12 @@ interface VectorInputProps {
 
 const VectorInput: React.FC<VectorInputProps> = ({ label, value, onChange, isRunning }) => {
   const formatValue = (val: number) => {
-    if (isRunning) return val.toFixed(2);
-    const str = val.toString();
-    if (str.startsWith('0') && str.length > 1 && str[1] !== '.') {
-      return str.substring(1);
+    // Wenn der Wert eine ganze Zahl ist, zeige keine Nachkommastellen
+    if (Number.isInteger(val)) {
+      return val.toString();
     }
-    return str;
+    // Ansonsten zeige 2 Nachkommastellen
+    return val.toFixed(2);
   };
 
   return (
