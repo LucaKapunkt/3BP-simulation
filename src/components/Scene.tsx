@@ -29,8 +29,11 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
 
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
+      {/* Erhöhe das Umgebungslicht für bessere Grundbeleuchtung */}
+      <ambientLight intensity={1.5} />
+      
+   
+
       {showGrid && (
         <Grid
           args={[1000, 1000]}

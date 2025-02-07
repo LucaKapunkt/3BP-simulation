@@ -29,8 +29,17 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
       if (camMode === '3VP') {
-        isDraggingRef.current = true;
-        lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+        // Prüfe, ob die Maus sich über einem der Container befindet
+        const target = e.target as HTMLElement;
+        const isOverControls = target.closest('.controls-container') !== null;
+        const isOverBodies = target.closest('.bodies-container') !== null;
+        const isOverPresets = target.closest('.preset-container') !== null;
+
+        // Nur aktivieren, wenn die Maus nicht über den Containern ist
+        if (!isOverControls && !isOverBodies && !isOverPresets) {
+          isDraggingRef.current = true;
+          lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+        }
       }
     };
 
@@ -43,7 +52,6 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
         sphericalRef.current.theta -= deltaX * 0.01;
         
         // Vertikale Bewegung ändert die Elevation (phi)
-        // Negatives Vorzeichen für invertierte Bewegung
         sphericalRef.current.phi = Math.max(
           0.1,
           Math.min(Math.PI - 0.1, sphericalRef.current.phi - deltaY * 0.01)

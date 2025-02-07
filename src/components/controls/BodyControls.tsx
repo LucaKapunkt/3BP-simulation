@@ -16,14 +16,28 @@ import { CelestialBodyData } from '../../simulation/Berechnung';
 interface BodyControlsProps {
   body: CelestialBodyData;
   onChange: (newBody: CelestialBodyData) => void;
-  bodyName: string;
   isRunning: boolean;
-    }
+  index: number;
+}
 
-const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, bodyName, isRunning }) => {
+const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, index, isRunning }) => {
+  // Funktion zum Ermitteln des Körpernamens
+  const getBodyName = (index: number): string => {
+    switch(index) {
+      case 0:
+        return 'Erde';
+      case 1:
+        return 'Mars';
+      case 2:
+        return 'Jupiter';
+      default:
+        return `Körper ${index + 1}`;
+    }
+  };
+
   return (
     <div className="body-controls">
-      <h3>{bodyName}</h3>
+      <h3>{getBodyName(index)}</h3>
       <VectorInput
         label="Position"
         value={body.position}

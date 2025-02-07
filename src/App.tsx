@@ -84,6 +84,7 @@ function App() {
             setIsRunning(false);
             setBahnenHistory([[], [], []]);
             setResetCam(true);
+            setCamMode('default');
           }}
         />
       </div>
@@ -119,7 +120,7 @@ function App() {
               setBodies(newBodies);
               setBahnenHistory([[], [], []]);
             }}
-            bodyName={`Körper ${index + 1}`}
+            index={index}
             isRunning={isRunning}
           />
         ))}

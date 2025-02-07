@@ -26,30 +26,55 @@ const CelestialBody: React.FC<CelestialBodyProps> = ({ position, showEdges, mass
   // Berechne den Radius basierend auf der Masse
   const radius = Math.pow(mass / 1000, 1/3);
   const meshRef = useRef<THREE.Mesh>(null);
+  const cloudsRef = useRef<THREE.Mesh>(null);
 
   // Wähle die richtige Textur basierend auf dem Index
   const texturePath = index === 0 ? './assets/earth.jpg' : 
                      index === 1 ? './assets/mars.jpg' : 
                      './assets/jupiter.jpg';
   
-
+  // Lade die Texturen
   const texture = useTexture(texturePath);
+  const cloudsTexture = index === 0 ? useTexture('./assets/earth_clouds.jpg') : null;
 
   // Rotation der Planeten
   useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.005;
+      meshRef.current.rotation.y += 0.004;
+    }
+    if (cloudsRef.current) {
+      cloudsRef.current.rotation.y += 0.007; // Wolken rotieren etwas schneller
     }
   });
 
   return (
-    <mesh position={position} ref={meshRef}>
-      <sphereGeometry args={[radius, 32, 32]} />
-      <meshStandardMaterial map={texture} />
-      {showEdges && (
-        <Edges scale={1} threshold={1} color="white" />
+    <group position={position}>
+      {/* Hauptkörper */}
+      <mesh ref={meshRef}>
+        <sphereGeometry args={[radius, 32, 32]} />
+        <meshStandardMaterial map={texture} />
+        {showEdges && (
+          <Edges scale={1} threshold={1} color="white" />
+        )}
+      </mesh>
+
+      {/* Wolkenschicht nur für die Erde */}
+      {index === 0 && cloudsTexture && (
+        <mesh ref={cloudsRef}>
+          <sphereGeometry args={[radius * 1.01, 32, 32]} />
+          <meshStandardMaterial 
+            map={cloudsTexture}
+            transparent={true}
+            opacity={0.7}
+            depthWrite={false}
+            emissive={"grey"}
+            emissiveMap={cloudsTexture}
+            emissiveIntensity={0.12}
+           
+          />
+        </mesh>
       )}
-    </mesh>
+    </group>
   );
 };
 

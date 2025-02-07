@@ -16,6 +16,20 @@ const CameraControls: React.FC<CameraControlsProps> = ({
   selectedBody, 
   setSelectedBody 
 }) => {
+  // Funktion zum Ermitteln des Körpernamens
+  const getBodyName = (index: number): string => {
+    switch(index) {
+      case 1:
+        return 'Erde';
+      case 2:
+        return 'Mars';
+      case 3:
+        return 'Jupiter';
+      default:
+        return '-';
+    }
+  };
+
   // Handler für den Kameramodus-Button
   const handleModeClick = () => {
     if (camMode === 'default') {
@@ -44,7 +58,7 @@ const CameraControls: React.FC<CameraControlsProps> = ({
         disabled={camMode === 'default'}
         className={camMode === 'default' ? 'inactive' : ''}
       >
-        Körper: {camMode === 'default' ? '-' : selectedBody}
+        Körper: {camMode === 'default' ? '-' : getBodyName(selectedBody)}
       </button>
     </div>
   );
