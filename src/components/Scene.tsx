@@ -61,6 +61,7 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
             color={colors[index]} 
             showEdges={showEdges}
             mass={body.mass}
+            index={index}
           />
         );
       })}
