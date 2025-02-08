@@ -17,7 +17,7 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
   selectedBody,
   bodies,
   resetCam,
-  setResetCam
+  setResetCam,
 }) => {
   const { camera } = useThree();
   const lastTargetPos = useRef<THREE.Vector3>(new THREE.Vector3());
@@ -100,6 +100,7 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
         camera.updateProjectionMatrix();
         setResetCam(false);
       }
+      
       return;
     }
 

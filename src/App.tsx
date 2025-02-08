@@ -126,9 +126,7 @@ function App() {
           bahnenHistory={bahnenHistory}
         />
         <OrbitControls
-          enableZoom={camMode === 'default' || camMode === '3VP'}
-          enableRotate={camMode === 'default' || camMode === '3VP'}
-          enablePan={camMode === 'default'}
+          enablePan={camMode !== 'default' && camMode !== '3VP' && camMode !== 'FVP'}
         />
       </Canvas>
       <div className="bodies-container">
