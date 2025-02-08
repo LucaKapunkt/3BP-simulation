@@ -10,15 +10,16 @@ import VisualizationControls from './components/controls/VisualizationControls';
 import CameraControls, { CamMode } from './components/controls/CameraControls';
 import CameraUpdater from './components/CameraUpdater';
 import { defaultConditions } from './data/initialConditions';
-import { calculateNextStep, type Vector3D } from './simulation/Berechnung';
+import { toSIBodies, fromSIBodies } from './simulation/units';
+import { rk4Step, Vector3D } from './simulation/DimBerechnung';
 import './styles/App.css';
 
-
+let durchlauf = 0;
+let tage = 0;
 function App() {
-  // Konstanter, kleiner Zeitschritt für hohe Genauigkeit
-  const FIXED_TIMESTEP = 0.001;
+  
   // TimeStep wird jetzt als Multiplikator verwendet
-  const [timeStep, setTimeStep] = useState(15);
+  const [timeStep, setTimeStep] = useState(5);
   const animationFrameRef = useRef<number>();
   const [isRunning, setIsRunning] = useState(false);
   const [resetCam, setResetCam] = useState(false);
@@ -39,6 +40,10 @@ function App() {
   const [camMode, setCamMode] = useState<CamMode>('default');
   const [selectedBody, setSelectedBody] = useState(1);
 
+  
+
+  
+
   // Aktualisiere lastUserInput wenn die Simulation gestartet wird
   useEffect(() => {
     if (isRunning) {
@@ -51,19 +56,30 @@ function App() {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       return;
     }
+
     const animate = () => {
       // Führe mehrere Berechnungsschritte durch
       let currentBodies = bodies;
       const steps = Math.round(timeStep);
+
+      // Konvertieren ins SI-System
+      let siBodies = toSIBodies(currentBodies);
+      
+      const dt = 1800; // 720 Sekunden pro Schritt
       
       for (let i = 0; i < steps; i++) {
-        const nextStep = calculateNextStep({ bodies: currentBodies, timeStep: FIXED_TIMESTEP });
-        currentBodies = currentBodies.map((body, index) => ({
-          ...body,
-          position: nextStep.positions[index],
-          velocity: nextStep.velocities[index]
-        }));
+        // RK4-Aufruf
+        siBodies = rk4Step(siBodies, dt);
+        durchlauf++;
       }
+
+      if (durchlauf == 48) {
+        tage++;
+        console.log('Tag nr: ' + tage);
+        durchlauf = 0;
+      }
+      // Zurückkonvertieren ins SI-System
+      currentBodies = fromSIBodies(siBodies);
 
       // Aktualisiere den State nur mit dem letzten Ergebnis
       setBodies(currentBodies);
@@ -71,7 +87,7 @@ function App() {
       // Aktualisiere die Bahnhistorie
       setBahnenHistory(prevHistory => {
         const newHistory = prevHistory.map((bodyHistory, index) => {
-          const limitedHistory = [...bodyHistory.slice(-999), currentBodies[index].position];
+          const limitedHistory = [...bodyHistory.slice(-9999), currentBodies[index].position];
           return limitedHistory;
         });
         return newHistory;
@@ -157,7 +173,7 @@ function App() {
             setCamMode('default');
             setSelectedBody(1);
             setResetCam(true);
-            setTimeStep(15);
+            setTimeStep(5);
           }}
           timeStep={timeStep}
           onTimeStepChange={setTimeStep}

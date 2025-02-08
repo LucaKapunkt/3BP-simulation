@@ -37,7 +37,7 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
         <input
           type="range"
           min="1"
-          max="75"
+          max="50"
           step="1"
           value={timeStep}
           onChange={(e) => onTimeStepChange(Number(e.target.value))}

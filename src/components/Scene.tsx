@@ -12,7 +12,7 @@ import React from 'react';
 import { Grid, useTexture } from '@react-three/drei';
 import CelestialBody from './celestial/CelestialBody';
 import Bahn from './celestial/Bahn';
-import { Vector3D, CelestialBodyData } from '../simulation/Berechnung';
+import { Vector3D, CelestialBodyData } from '../simulation/DimBerechnung';
 import * as THREE from 'three';
 
 interface SceneProps {

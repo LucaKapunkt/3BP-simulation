@@ -7,7 +7,7 @@
  * - Beispiele für chaotische und stabile Systeme
  */
 
-import { createVector3D, createCelestialBody, type CelestialBodyData } from '../simulation/Berechnung';
+import { createVector3D, createCelestialBody, type CelestialBodyData } from '../simulation/DimBerechnung';
 
 // Standardkonfiguration
 export const defaultConditions: CelestialBodyData[] = [
@@ -73,6 +73,7 @@ export const chaoticConditions: CelestialBodyData[] = [
 ];
 
 // Sandbox-Konfiguration mit Körpern nahe beieinander
+/*
 export const sandboxConditions: CelestialBodyData[] = [
   createCelestialBody(
     createVector3D(5, 0, 0),    // Position nahe am Ursprung
@@ -88,6 +89,24 @@ export const sandboxConditions: CelestialBodyData[] = [
     createVector3D(-5, 0, 0),    // Leicht versetzt auf der Y-Achse
     createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
     1000
+  )
+];*/
+
+export const sandboxConditions: CelestialBodyData[] = [
+  createCelestialBody(
+    createVector3D(0, 0, 0),    // Position nahe am Ursprung
+    createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
+    82.2
+  ),
+  createCelestialBody(
+    createVector3D(1.5376, 0, 0),    // Leicht versetzt auf der X-Achse
+    createVector3D(0, 0, 1.02),    // Keine Anfangsgeschwindigkeit
+    1
+  ),
+  createCelestialBody(
+    createVector3D(1000, -1000, 0),    // Leicht versetzt auf der Y-Achse
+    createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
+    1
   )
 ];
 
