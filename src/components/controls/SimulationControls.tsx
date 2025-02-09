@@ -26,6 +26,8 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
   timeStep,
   onTimeStepChange,
 }) => {
+  const speedOptions = [1, 2, 4, 8, 16, 32, 64];
+
   return (
     <div className="simulation-controls">
       <button onClick={onToggleRunning}>
@@ -33,15 +35,20 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
       </button>
       <button onClick={onReset}>Reset</button>
       <div className="time-step-control">
-        <label>Geschwindigkeit: {timeStep}x</label>
-        <input
-          type="range"
-          min="1"
-          max="50"
-          step="1"
-          value={timeStep}
-          onChange={(e) => onTimeStepChange(Number(e.target.value))}
-        />
+        <div className="time-step-wrapper">
+          <span className="time-step-label">Simulationsgeschwindigkeit:</span>
+          <div className="time-step-buttons">
+            {speedOptions.map((speed) => (
+              <button
+                key={speed}
+                onClick={() => onTimeStepChange(speed)}
+                className={timeStep === speed ? 'active' : ''}
+              >
+                {speed}x
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

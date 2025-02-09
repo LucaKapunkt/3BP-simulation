@@ -19,22 +19,22 @@ export interface PresetConfig {
 
 // Standardkonfiguration
 const defaultConfig = {
-  usedBodies: [0, 1, 2], // Erde, Mars, Jupiter
+  usedBodies: [0, 1, 3], // Erde, Mars, Mond
   get bodies() {
     return [
   createCelestialBody(
-        createVector3D(15, 0, 0),
-        createVector3D(0, 0, 25),
+        createVector3D(0, 0, 0),
+        createVector3D(0, 0, 0),
         CELESTIAL_BODIES[this.usedBodies[0]].mass / MASS_SCALE
       ),
   createCelestialBody(
-        createVector3D(300, 10, 0),
-        createVector3D(-10, 0, 0),
+        createVector3D(1000, 1000, 0),
+        createVector3D(0, 0, 0),
         CELESTIAL_BODIES[this.usedBodies[1]].mass / MASS_SCALE
       ),
   createCelestialBody(
-        createVector3D(0, 0, 0),
-        createVector3D(0, 0, -2),
+        createVector3D(38.44, 0, 0),
+        createVector3D(0, 0, 1.02),
         CELESTIAL_BODIES[this.usedBodies[2]].mass / MASS_SCALE
       )
     ];

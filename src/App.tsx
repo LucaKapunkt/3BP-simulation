@@ -19,7 +19,7 @@ let durchlauf = 0;
 function App() {
   
   // TimeStep wird jetzt als Multiplikator verwendet
-  const [timeStep, setTimeStep] = useState(5);
+  const [timeStep, setTimeStep] = useState(1);
   const animationFrameRef = useRef<number>();
   const [isRunning, setIsRunning] = useState(false);
   const [resetCam, setResetCam] = useState(false);

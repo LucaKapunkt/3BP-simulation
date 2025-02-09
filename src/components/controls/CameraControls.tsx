@@ -45,16 +45,22 @@ const CameraControls: React.FC<CameraControlsProps> = ({
 
   return (
     <div className="camera-controls">
-      <button onClick={handleModeClick}>
-        Kameramodus: {camMode === 'default' ? 'Frei' : camMode}
-      </button>
-      <button
-        onClick={handleBodyClick}
-        disabled={camMode === 'default'}
-        className={camMode === 'default' ? 'inactive' : ''}
-      >
-        Körper: {camMode === 'default' ? '-' : getBodyName(selectedBody)}
-      </button>
+      <div className="camera-mode-control">
+        <span className="control-label">Kameramodus:</span>
+        <button onClick={handleModeClick}>
+          {camMode === 'default' ? 'Frei' : camMode}
+        </button>
+      </div>
+      <div className="body-select-control">
+        <span className="control-label">Körper:</span>
+        <button
+          onClick={handleBodyClick}
+          disabled={camMode === 'default'}
+          className={camMode === 'default' ? 'inactive' : ''}
+        >
+          {camMode === 'default' ? '-' : getBodyName(selectedBody)}
+        </button>
+      </div>
     </div>
   );
 };
