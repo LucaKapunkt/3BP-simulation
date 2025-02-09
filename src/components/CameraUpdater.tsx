@@ -37,7 +37,7 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
 
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
-      if (camMode === '3VP') {
+      if (camMode === '3VP' || camMode === '3VP auto') {
         // Prüfe, ob die Maus sich über einem der Container befindet
         const target = e.target as HTMLElement;
         const isOverControls = target.closest('.controls-container') !== null;
@@ -53,18 +53,22 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isDraggingRef.current && camMode === '3VP') {
+      if (isDraggingRef.current) {
         const deltaX = e.clientX - lastMousePosRef.current.x;
         const deltaY = e.clientY - lastMousePosRef.current.y;
 
-        // Horizontale Bewegung ändert den Azimuth (theta)
-        sphericalRef.current.theta -= deltaX * 0.01;
+        // Horizontale Bewegung nur im 3VP Modus
+        if (camMode === '3VP') {
+          sphericalRef.current.theta -= deltaX * 0.01;
+        }
         
-        // Vertikale Bewegung ändert die Elevation (phi)
-        sphericalRef.current.phi = Math.max(
-          0.1,
-          Math.min(Math.PI - 0.1, sphericalRef.current.phi - deltaY * 0.01)
-        );
+        // Vertikale Bewegung in beiden Modi
+        if (camMode === '3VP' || camMode === '3VP auto') {
+          sphericalRef.current.phi = Math.max(
+            0.1,
+            Math.min(Math.PI - 0.1, sphericalRef.current.phi - deltaY * 0.01)
+          );
+        }
 
         lastMousePosRef.current = { x: e.clientX, y: e.clientY };
       }
@@ -76,18 +80,25 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
 
     // Neuer Event-Handler für das Mausrad
     const handleWheel = (e: WheelEvent) => {
-      if (camMode === '3VP') {
-        const zoomSpeed = Math.min(0.09,sphericalRef.current.radius ** 2 * 0.0001);
-        // Abstand ändern basierend auf Mausrad-Bewegung
-        const newRadius = sphericalRef.current.radius + e.deltaY * zoomSpeed;
+      if (camMode === '3VP' || camMode === '3VP auto') {
+        // Prüfe, ob die Maus sich über dem bodies-container befindet
+        const target = e.target as HTMLElement;
+        const isOverBodies = target.closest('.bodies-container') !== null;
         
-        // Berechne den Minimalabstand basierend auf dem Radius des ausgewählten Körpers
-        const selectedBodyData = bodies[selectedBody - 1];
-        const celestialBodyData = CELESTIAL_BODIES[selectedBody - 1];
-        if (selectedBodyData && celestialBodyData) {
-          const bodyRadius = calculateVisualRadius(celestialBodyData, selectedBodyData.currentMass);
-          const minDistance = 1.5 *bodyRadius;
-          sphericalRef.current.radius = Math.max(minDistance, Math.min(1000, newRadius));
+        // Nur zoomen, wenn nicht über dem bodies-container
+        if (!isOverBodies) {
+          const zoomSpeed = Math.min(0.09,sphericalRef.current.radius ** 2 * 0.0001);
+          // Abstand ändern basierend auf Mausrad-Bewegung
+          const newRadius = sphericalRef.current.radius + e.deltaY * zoomSpeed;
+          
+          // Berechne den Minimalabstand basierend auf dem Radius des ausgewählten Körpers
+          const selectedBodyData = bodies[selectedBody - 1];
+          const celestialBodyData = CELESTIAL_BODIES[selectedBody - 1];
+          if (selectedBodyData && celestialBodyData) {
+            const bodyRadius = calculateVisualRadius(celestialBodyData, selectedBodyData.currentMass);
+            const minDistance = 1.5 * bodyRadius;
+            sphericalRef.current.radius = Math.max(minDistance, Math.min(1000, newRadius));
+          }
         }
       }
     };
@@ -128,10 +139,7 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
     // Speichere den targetPos für späteren Gebrauch
     lastTargetPos.current = targetPos.clone();
 
-    if (camMode === 'FVP') {
-      // First View Perspective: Kamera direkt am Körper
-      camera.position.copy(targetPos);
-      
+    if (camMode === '3VP auto') {
       // Berechne Blickrichtung basierend auf der Geschwindigkeit
       const velocity = new THREE.Vector3(
         targetBody.velocity.x,
@@ -139,9 +147,17 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
         targetBody.velocity.z
       );
       
-      // Normalisiere die Geschwindigkeit und addiere sie zur Position
+      // Normalisiere die Geschwindigkeit für die Blickrichtung
       velocity.normalize();
       const lookAtPos = targetPos.clone().add(velocity);
+      
+      // Berechne die Kameraposition basierend auf den Kugelkoordinaten
+      const cameraOffset = new THREE.Vector3();
+      // Setze theta auf die entgegengesetzte Richtung (+ Math.PI), um hinter dem Körper zu sein
+      sphericalRef.current.theta = Math.atan2(velocity.x, velocity.z) + Math.PI;
+      cameraOffset.setFromSpherical(sphericalRef.current);
+      
+      camera.position.copy(targetPos).add(cameraOffset);
       camera.lookAt(lookAtPos);
     } 
     else if (camMode === '3VP') {
@@ -151,7 +167,6 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
       
       camera.position.copy(targetPos).add(cameraOffset);
       camera.lookAt(targetPos);
-      
     }
 
     camera.updateProjectionMatrix();

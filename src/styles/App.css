@@ -54,25 +54,58 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: 300px;
+  width: 270px;
   z-index: 10;
-  padding: 30px;
-  gap: 30px;
+  padding: max(25px, 2vh) 11px max(25px, 2vh) 20px;
+  gap: max(5px, 2vh);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   background-color: transparent;
+  overflow-y: auto;
+  max-height: 100vh;
+  scrollbar-width: none;
+}
+
+.bodies-container:hover {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  padding-right: 0;
+}
+
+.bodies-container::-webkit-scrollbar {
+  width: 7px;
+}
+
+.bodies-container:hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bodies-container::-webkit-scrollbar-track {
+  background: transparent;
+  
+}
+
+.bodies-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+
+.bodies-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Styles für den Controls-Container und Preset-Container */
 .controls-container, .top-container {
   position: absolute;
-  left: 300px;
+  left: 270px;
   right: 0;
   height: auto;
   z-index: 10;
   padding: 25px;
-  gap: 20px;
+  gap: 25px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -140,7 +173,7 @@
   padding: 20px;
   border-radius: 8px;
   display: flex;
-  gap: 10px;
+  gap: 5px;
   width: auto;
   height: auto;
   background-color: rgba(0, 0, 0, 0.6);
@@ -172,7 +205,7 @@
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  flex: 1;
+  width: 230px;
   display: flex;
   flex-direction: column;
 }

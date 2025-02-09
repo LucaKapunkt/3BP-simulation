@@ -57,7 +57,7 @@ const Scene: React.FC<SceneProps> = ({ bodies, usedBodies, showEdges, showGrid, 
           sectionSize={5}
           sectionThickness={1}
           sectionColor="#aaa"
-          fadeDistance={400}
+          fadeDistance={200}
           fadeStrength={1}
         />
       )}

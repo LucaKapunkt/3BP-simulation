@@ -2,7 +2,7 @@
 import React from 'react';
 import { CELESTIAL_BODIES } from '../celestial/CelestialBody';
 
-export type CamMode = 'default' | 'FVP' | '3VP';
+export type CamMode = 'default' | '3VP auto' | '3VP';
 
 interface CameraControlsProps {
   camMode: CamMode;
@@ -28,8 +28,8 @@ const CameraControls: React.FC<CameraControlsProps> = ({
   // Handler für den Kameramodus-Button
   const handleModeClick = () => {
     if (camMode === 'default') {
-      setCamMode('FVP');
-    } else if (camMode === 'FVP') {
+      setCamMode('3VP auto');
+    } else if (camMode === '3VP auto') {
       setCamMode('3VP');
     } else {
       setCamMode('default');
