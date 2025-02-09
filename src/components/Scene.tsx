@@ -49,7 +49,7 @@ const Scene: React.FC<SceneProps> = ({ bodies, usedBodies, showEdges, showGrid, 
       
       {showGrid && (
         <Grid
-          args={[20000, 20000]}
+          args={[30000, 30000]}
           position={[0, -35, 0]}
           cellSize={1}
           cellThickness={0.5}
@@ -57,7 +57,7 @@ const Scene: React.FC<SceneProps> = ({ bodies, usedBodies, showEdges, showGrid, 
           sectionSize={5}
           sectionThickness={1}
           sectionColor="#aaa"
-          fadeDistance={150}
+          fadeDistance={400}
           fadeStrength={1}
         />
       )}
