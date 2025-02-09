@@ -18,92 +18,104 @@ export interface PresetConfig {
 }
 
 // Standardkonfiguration
-export const defaultConditions: PresetConfig = {
+const defaultConfig = {
   usedBodies: [0, 1, 2], // Erde, Mars, Jupiter
-  bodies: [
-    createCelestialBody(
-      createVector3D(15, 0, 0),
-      createVector3D(0, 0, 25),
-      CELESTIAL_BODIES[0].mass / MASS_SCALE
-    ),
-    createCelestialBody(
-      createVector3D(300, 10, 0),
-      createVector3D(-10, 0, 0),
-      CELESTIAL_BODIES[1].mass / MASS_SCALE
-    ),
-    createCelestialBody(
-      createVector3D(0, 0, 0),
-      createVector3D(0, 0, -2),
-      CELESTIAL_BODIES[2].mass / MASS_SCALE
-    )
-  ]
+  get bodies() {
+    return [
+  createCelestialBody(
+        createVector3D(15, 0, 0),
+        createVector3D(0, 0, 25),
+        CELESTIAL_BODIES[this.usedBodies[0]].mass / MASS_SCALE
+      ),
+  createCelestialBody(
+        createVector3D(300, 10, 0),
+        createVector3D(-10, 0, 0),
+        CELESTIAL_BODIES[this.usedBodies[1]].mass / MASS_SCALE
+      ),
+  createCelestialBody(
+        createVector3D(0, 0, 0),
+        createVector3D(0, 0, -2),
+        CELESTIAL_BODIES[this.usedBodies[2]].mass / MASS_SCALE
+      )
+    ];
+  }
 };
+export const defaultConditions: PresetConfig = defaultConfig;
 
 // Symmetrische Dreiecksformation
-export const triangleConditions: PresetConfig = {
+const triangleConfig = {
   usedBodies: [0, 1, 2], // Erde, Mars, Jupiter
-  bodies: [
-    createCelestialBody(
-      createVector3D(0, 0, 20),
-      createVector3D(5, 0, 0),
-      CELESTIAL_BODIES[0].mass / MASS_SCALE
-    ),
-    createCelestialBody(
-      createVector3D(17.32, 0, -10),
-      createVector3D(-2.5, 0, -4.33),
-      CELESTIAL_BODIES[1].mass / MASS_SCALE
-    ),
-    createCelestialBody(
-      createVector3D(-17.32, 0, -10),
-      createVector3D(-2.5, 0, 4.33),
-      CELESTIAL_BODIES[2].mass / MASS_SCALE
-    )
-  ]
+  get bodies() {
+    return [
+  createCelestialBody(
+    createVector3D(0, 0, 20),
+    createVector3D(5, 0, 0),
+        CELESTIAL_BODIES[this.usedBodies[0]].mass / MASS_SCALE
+  ),
+  createCelestialBody(
+    createVector3D(17.32, 0, -10),
+    createVector3D(-2.5, 0, -4.33),
+        CELESTIAL_BODIES[this.usedBodies[1]].mass / MASS_SCALE
+  ),
+  createCelestialBody(
+    createVector3D(-17.32, 0, -10),
+    createVector3D(-2.5, 0, 4.33),
+        CELESTIAL_BODIES[this.usedBodies[2]].mass / MASS_SCALE
+  )
+];
+  }
 };
+export const triangleConditions: PresetConfig = triangleConfig;
 
 // Chaotische Konfiguration
-export const chaoticConditions: PresetConfig = {
+const chaoticConfig = {
   usedBodies: [0, 1, 2], // Erde, Mars, Jupiter
-  bodies: [
-    createCelestialBody(
-      createVector3D(-10, 0, 0),
-      createVector3D(3.682716, 1.506084, 0),
-      CELESTIAL_BODIES[0].mass / MASS_SCALE
-    ),
-    createCelestialBody(
-      createVector3D(10, 0, 0),
-      createVector3D(3.682716, 1.506084, 0),
-      CELESTIAL_BODIES[1].mass / MASS_SCALE
-    ),
-    createCelestialBody(
-      createVector3D(0, 0, 10),
-      createVector3D(-7.365432, -3.012168, 0),
-      CELESTIAL_BODIES[2].mass / MASS_SCALE
-    )
-  ]
+  get bodies() {
+    return [
+  createCelestialBody(
+        createVector3D(-10, 0, 0),
+        createVector3D(3.682716, 1.506084, 0),
+        CELESTIAL_BODIES[this.usedBodies[0]].mass / MASS_SCALE
+  ),
+  createCelestialBody(
+        createVector3D(10, 0, 0),
+        createVector3D(3.682716, 1.506084, 0),
+        CELESTIAL_BODIES[this.usedBodies[1]].mass / MASS_SCALE
+  ),
+  createCelestialBody(
+        createVector3D(0, 0, 10),
+        createVector3D(-7.365432, -3.012168, 0),
+        CELESTIAL_BODIES[this.usedBodies[2]].mass / MASS_SCALE
+      )
+    ];
+  }
 };
+export const chaoticConditions: PresetConfig = chaoticConfig;
 
 // Sandbox-Konfiguration
-export const sandboxConditions: PresetConfig = {
-  usedBodies: [0, 3, 2], // Erde, Mond, Jupiter
-  bodies: [
-    createCelestialBody(
-      createVector3D(0, 0, 0),
-      createVector3D(0, 0, 0),
-      CELESTIAL_BODIES[0].mass / MASS_SCALE
-    ),
-    createCelestialBody(
-      createVector3D(38.44, 0, 0),
-      createVector3D(0, 0, 1.02),
-      CELESTIAL_BODIES[3].mass / MASS_SCALE  // Mond statt Mars
-    ),
-    createCelestialBody(
-      createVector3D(1000, -1000, 0),
-      createVector3D(0, 0, 0),
-      CELESTIAL_BODIES[2].mass / MASS_SCALE
-    )
-  ]
+const sandboxConfig = {
+  usedBodies: [0, 3, 4], // Erde, Mond, Sonne
+  get bodies() {
+    return [
+  createCelestialBody(
+        createVector3D(14710, 0, 0),
+        createVector3D(0, 0, 29.78),
+        CELESTIAL_BODIES[this.usedBodies[0]].mass / MASS_SCALE
+  ),
+  createCelestialBody(
+        createVector3D(14748.44, 0, 0),
+        createVector3D(0, 0, 31),
+        CELESTIAL_BODIES[this.usedBodies[1]].mass / MASS_SCALE  // Mond
+  ),
+  createCelestialBody(
+        createVector3D(0, 0, 0),
+        createVector3D(0, 0, 0),
+        CELESTIAL_BODIES[this.usedBodies[2]].mass / MASS_SCALE  // Sonne
+      )
+    ];
+  }
 };
+export const sandboxConditions: PresetConfig = sandboxConfig;
 
 // Sammlung verschiedener Presets
 export const presets: Record<string, PresetConfig> = {

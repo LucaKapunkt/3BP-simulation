@@ -26,7 +26,13 @@ const Bahn: React.FC<BahnProps> = ({ positions, color }) => {
       <bufferGeometry>
         <float32BufferAttribute attach="attributes-position" args={[new Float32Array(points.flat()), 3]} />
       </bufferGeometry>
-      <lineBasicMaterial color={color} />
+      <lineBasicMaterial 
+        color={color} 
+        linewidth={2}
+        transparent={false}
+        depthWrite={false}
+        depthTest={false}
+      />
     </line>
   );
 };

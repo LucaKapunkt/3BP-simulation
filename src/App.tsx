@@ -9,13 +9,13 @@ import SimulationControls from './components/controls/SimulationControls';
 import VisualizationControls from './components/controls/VisualizationControls';
 import CameraControls, { CamMode } from './components/controls/CameraControls';
 import CameraUpdater from './components/CameraUpdater';
+import TimeDisplay from './components/controls/TimeDisplay';
 import { defaultConditions } from './data/initialConditions';
 import { toSIBodies, fromSIBodies } from './simulation/units';
 import { rk4Step, Vector3D } from './simulation/DimBerechnung';
 import './styles/App.css';
 
 let durchlauf = 0;
-let tage = 0;
 function App() {
   
   // TimeStep wird jetzt als Multiplikator verwendet
@@ -23,6 +23,7 @@ function App() {
   const animationFrameRef = useRef<number>();
   const [isRunning, setIsRunning] = useState(false);
   const [resetCam, setResetCam] = useState(false);
+  const [days, setDays] = useState(0);
 
   const [showEdges, setShowEdges] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
@@ -41,10 +42,6 @@ function App() {
 
   const [camMode, setCamMode] = useState<CamMode>('default');
   const [selectedBody, setSelectedBody] = useState(1);
-
-  
-
-  
 
   // Aktualisiere lastUserInput wenn die Simulation gestartet wird
   useEffect(() => {
@@ -73,13 +70,13 @@ function App() {
         // RK4-Aufruf
         siBodies = rk4Step(siBodies, dt);
         durchlauf++;
+        if (durchlauf == 48) {
+          setDays(prev => prev + 1);
+          durchlauf = 0;
+        }
       }
 
-      if (durchlauf == 48) {
-        tage++;
-        console.log('Tag nr: ' + tage);
-        durchlauf = 0;
-      }
+      
       // Zurückkonvertieren ins SI-System
       currentBodies = fromSIBodies(siBodies);
 
@@ -105,7 +102,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="preset-container">
+      <div className="top-container">
         <PresetSelection
           onSelect={(newConfig) => {
             setSelectedConditions(newConfig);
@@ -116,16 +113,18 @@ function App() {
             setBahnenHistory([[], [], []]);
             setResetCam(true);
             setCamMode('default');
-            setTimeStep(5);
+            setTimeStep(1);
+            setDays(0);
           }}
         />
+        <TimeDisplay days={days} />
       </div>
       <Canvas 
         camera={{ 
           position: [0, 10, 15], 
           fov: 75,
           near: 0.1,        // Minimale Sichtweite
-          far: 2000         // Maximale Sichtweite
+          far: 20000         // Maximale Sichtweite
         }}
       >
         <CameraUpdater
@@ -176,7 +175,8 @@ function App() {
             setCamMode('default');
             setSelectedBody(1);
             setResetCam(true);
-            setTimeStep(5);
+            setTimeStep(1);
+            setDays(0);
           }}
           timeStep={timeStep}
           onTimeStepChange={setTimeStep}

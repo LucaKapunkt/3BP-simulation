@@ -2,12 +2,14 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import type { CamMode } from './controls/CameraControls';
-import type { Vector3D } from '../simulation/Berechnung';
+import type { Vector3D } from '../simulation/DimBerechnung';
+import { CELESTIAL_BODIES } from './celestial/CelestialBody';
+import { MASS_SCALE, DISTANCE_SCALE } from '../simulation/units';
 
 interface CameraUpdaterProps {
   camMode: CamMode;
   selectedBody: number;
-  bodies: { position: Vector3D; velocity: Vector3D }[];
+  bodies: { position: Vector3D; velocity: Vector3D; currentMass: number }[];
   resetCam: boolean;
   setResetCam: (value: boolean) => void;
 }
@@ -25,6 +27,13 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
   const sphericalRef = useRef<THREE.Spherical>(new THREE.Spherical(10, Math.PI / 4, 0));
   const isDraggingRef = useRef(false);
   const lastMousePosRef = useRef({ x: 0, y: 0 });
+
+  // Funktion zur Berechnung des visuellen Radius
+  const calculateVisualRadius = (bodyData: typeof CELESTIAL_BODIES[0], currentMass: number): number => {
+    const volume = currentMass * MASS_SCALE / bodyData.density;
+    const newRadius = Math.pow((3 * volume) / (4 * Math.PI), 1/3);
+    return newRadius / DISTANCE_SCALE;
+  };
 
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
@@ -68,14 +77,18 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
     // Neuer Event-Handler für das Mausrad
     const handleWheel = (e: WheelEvent) => {
       if (camMode === '3VP') {
-        // Dynamische Zoom-Geschwindigkeit basierend auf aktuellem Radius
-        // Je näher an den Körper, desto feinfühliger wird die Steuerung
-        const zoomSpeed = Math.min(0.07,sphericalRef.current.radius ** 2 * 0.0001);
-        console.log(zoomSpeed, sphericalRef.current.radius);
+        const zoomSpeed = Math.min(0.09,sphericalRef.current.radius ** 2 * 0.0001);
         // Abstand ändern basierend auf Mausrad-Bewegung
         const newRadius = sphericalRef.current.radius + e.deltaY * zoomSpeed;
-        // Minimal- und Maximalabstand festlegen
-        sphericalRef.current.radius = Math.max(2, Math.min(250, newRadius));
+        
+        // Berechne den Minimalabstand basierend auf dem Radius des ausgewählten Körpers
+        const selectedBodyData = bodies[selectedBody - 1];
+        const celestialBodyData = CELESTIAL_BODIES[selectedBody - 1];
+        if (selectedBodyData && celestialBodyData) {
+          const bodyRadius = calculateVisualRadius(celestialBodyData, selectedBodyData.currentMass);
+          const minDistance = 1.5 *bodyRadius;
+          sphericalRef.current.radius = Math.max(minDistance, Math.min(1000, newRadius));
+        }
       }
     };
 
@@ -90,7 +103,7 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
       window.removeEventListener('mouseup', handleMouseUp);
       window.removeEventListener('wheel', handleWheel);
     };
-  }, [camMode]);
+  }, [camMode, bodies, selectedBody]);
 
   useFrame(() => {
     if (camMode === 'default') {

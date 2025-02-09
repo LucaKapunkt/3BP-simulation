@@ -65,7 +65,7 @@
 }
 
 /* Styles für den Controls-Container und Preset-Container */
-.controls-container, .preset-container {
+.controls-container, .top-container {
   position: absolute;
   left: 300px;
   right: 0;
@@ -79,10 +79,6 @@
   background-color: transparent;
 }
 
-/* Spezifische Position für den Preset-Container */
-.preset-container {
-  top: 0;
-}
 
 /* Spezifische Position für den Controls-Container */
 .controls-container {
@@ -247,4 +243,23 @@
   font-size: 0.9em;
   color: rgba(255, 255, 255, 0.8);
 }
+
+.time-display {
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-left: auto;
+  margin-right: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 1.3em;
+}
+
+
+
+
 
