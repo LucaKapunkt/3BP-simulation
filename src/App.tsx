@@ -159,7 +159,7 @@ function App() {
               setBodies(newBodies);
               setBahnenHistory([[], [], []]);
             }}
-            index={usedBodies[index]}
+            celestialBodyIndex={usedBodies[index]}
             isRunning={isRunning}
           />
         ))}
@@ -196,6 +196,7 @@ function App() {
           setCamMode={setCamMode}
           selectedBody={selectedBody}
           setSelectedBody={setSelectedBody}
+          usedBodies={usedBodies}
         />
       </div>
     </div>

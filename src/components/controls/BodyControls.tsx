@@ -12,32 +12,22 @@
 import React from 'react';
 import VectorInput from './VectorInput';
 import { CelestialBodyData } from '../../simulation/DimBerechnung';
+import { CELESTIAL_BODIES } from '../celestial/CelestialBody';
 
 interface BodyControlsProps {
   body: CelestialBodyData;
   onChange: (newBody: CelestialBodyData) => void;
   isRunning: boolean;
-  index: number;
+  celestialBodyIndex: number;
 }
 
-const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, index, isRunning }) => {
-  // Funktion zum Ermitteln des Körpernamens
-  const getBodyName = (index: number): string => {
-    switch(index) {
-      case 0:
-        return 'Erde';
-      case 1:
-        return 'Mars';
-      case 2:
-        return 'Jupiter';
-      default:
-        return `Körper ${index + 1}`;
-    }
-  };
+const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, isRunning, celestialBodyIndex }) => {
+  const celestialBody = CELESTIAL_BODIES[celestialBodyIndex];
+  const bodyName = celestialBody ? celestialBody.name : 'Unbekannter Körper';
 
   return (
     <div className="body-controls">
-      <h3>{getBodyName(index)}</h3>
+      <h3>{bodyName}</h3>
       <VectorInput
         label="Position"
         value={body.position}

@@ -1,5 +1,6 @@
 // src/components/controls/CameraControls.tsx
 import React from 'react';
+import { CELESTIAL_BODIES } from '../celestial/CelestialBody';
 
 export type CamMode = 'default' | 'FVP' | '3VP';
 
@@ -8,26 +9,20 @@ interface CameraControlsProps {
   setCamMode: React.Dispatch<React.SetStateAction<CamMode>>;
   selectedBody: number;
   setSelectedBody: React.Dispatch<React.SetStateAction<number>>;
+  usedBodies: number[];
 }
 
 const CameraControls: React.FC<CameraControlsProps> = ({ 
   camMode, 
   setCamMode, 
   selectedBody, 
-  setSelectedBody 
+  setSelectedBody,
+  usedBodies
 }) => {
   // Funktion zum Ermitteln des Körpernamens
   const getBodyName = (index: number): string => {
-    switch(index) {
-      case 1:
-        return 'Erde';
-      case 2:
-        return 'Mars';
-      case 3:
-        return 'Jupiter';
-      default:
-        return '-';
-    }
+    const celestialBody = CELESTIAL_BODIES[usedBodies[index - 1]];
+    return celestialBody ? celestialBody.name : '-';
   };
 
   // Handler für den Kameramodus-Button
@@ -44,7 +39,7 @@ const CameraControls: React.FC<CameraControlsProps> = ({
   // Handler für den Körper-Button
   const handleBodyClick = () => {
     if (camMode !== 'default') {
-      setSelectedBody((prev) => (prev % 3) + 1);
+      setSelectedBody((prev) => (prev % usedBodies.length) + 1);
     }
   };
 
