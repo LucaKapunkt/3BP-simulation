@@ -55,10 +55,10 @@ const BodyControls: React.FC<BodyControlsProps> = ({ body, onChange, index, isRu
         <input
           type="number"
           min="1"
-          value={body.mass}
+          value={body.currentMass}
           onChange={(e) => {
             const inputValue = e.target.value === '' ? 1 : Math.max(1, parseFloat(e.target.value));
-            onChange({ ...body, mass: inputValue });
+            onChange({ ...body, currentMass: inputValue });
           }}
         />
       </div>

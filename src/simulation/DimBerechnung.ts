@@ -42,17 +42,20 @@ export interface Vector3D {
   export interface CelestialBodyData {
     position: Vector3D;
     velocity: Vector3D;
-    mass: number;
+    currentMass: number;
   }
+
 
   // Hilfsfunktion zum Erstellen eines CelestialBodyData-Objekts
   export function createCelestialBody(
     position: Vector3D,
     velocity: Vector3D,
-    mass: number
+    currentMass: number
   ): CelestialBodyData {
-    return { position, velocity, mass };
+    return { position, velocity, currentMass };
   }
+
+
   
  
   interface Derivative {
@@ -158,10 +161,11 @@ export interface Vector3D {
         // Gravitationsbeschleunigung:
         //   a_i = G * m_j / r^2 in Richtung (rVec).
         //   Richtig vektorwertig: a_i += G*m_j*(r_j - r_i)/|r_ij|^3
-        const factor = (G * bodies[j].mass) / (dist * dist * dist);
+        const factor = (G * bodies[j].currentMass) / (dist * dist * dist);
         ax += factor * rVec.x;
         ay += factor * rVec.y;
         az += factor * rVec.z;
+
       }
   
       accelerations[i] = { x: ax, y: ay, z: az };
@@ -217,10 +221,11 @@ export interface Vector3D {
       );
   
       result[i] = {
-        mass: bodies[i].mass,
+        currentMass: bodies[i].currentMass,
         position: newPos,
         velocity: newVel,
       };
+
     }
   
     return result;
@@ -280,10 +285,11 @@ export interface Vector3D {
       );
   
       newBodies[i] = {
-        mass: bodies[i].mass,
+        currentMass: bodies[i].currentMass,
         position: newPosition,
         velocity: newVelocity,
       };
+
     }
   
     return newBodies;

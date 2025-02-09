@@ -8,110 +8,105 @@
  */
 
 import { createVector3D, createCelestialBody, type CelestialBodyData } from '../simulation/DimBerechnung';
+import { CELESTIAL_BODIES } from '../components/celestial/CelestialBody';
+import { MASS_SCALE } from '../simulation/units';
+
+// Definition welche Körper in welchem Preset verwendet werden
+export interface PresetConfig {
+  bodies: CelestialBodyData[];
+  usedBodies: number[];  // Indizes der verwendeten Himmelskörper
+}
 
 // Standardkonfiguration
-export const defaultConditions: CelestialBodyData[] = [
-  // Körper 1: Schwerer zentraler Körper (Blau)
-  createCelestialBody(
-    createVector3D(15, 0, 0),     // Position im Ursprung
-    createVector3D(0, 0, 25),     // Keine Anfangsgeschwindigkeit
-    1000                        // Schwerer Körper
-  ),
-  // Körper 2: Vorbeifliegender Körper
-  createCelestialBody(
-    createVector3D(300, 10, 0),    // Startposition auf X-Achse
-    createVector3D(-10, 0, 0),     // Geschwindigkeit in Y-Richtung für Orbit
-    3000                         // Leichter Körper
-  ),
-  // Körper 3: Schwerer zentraler KörperVorbeifliegender Körper (Grün)
-  createCelestialBody(
-    createVector3D(0, 0, 0),  // Startet weit entfernt
-    createVector3D(0, 0, -2),  // Geschwindigkeit für nahen Vorbeiflug
-    10000                         // Mittlerer Körper
-  )
-];
+export const defaultConditions: PresetConfig = {
+  usedBodies: [0, 1, 2], // Erde, Mars, Jupiter
+  bodies: [
+    createCelestialBody(
+      createVector3D(15, 0, 0),
+      createVector3D(0, 0, 25),
+      CELESTIAL_BODIES[0].mass / MASS_SCALE
+    ),
+    createCelestialBody(
+      createVector3D(300, 10, 0),
+      createVector3D(-10, 0, 0),
+      CELESTIAL_BODIES[1].mass / MASS_SCALE
+    ),
+    createCelestialBody(
+      createVector3D(0, 0, 0),
+      createVector3D(0, 0, -2),
+      CELESTIAL_BODIES[2].mass / MASS_SCALE
+    )
+  ]
+};
 
 // Symmetrische Dreiecksformation
-export const triangleConditions: CelestialBodyData[] = [
-  createCelestialBody(
-    createVector3D(0, 0, 20),
-    createVector3D(5, 0, 0),
-    1000
-  ),
-  createCelestialBody(
-    createVector3D(17.32, 0, -10),
-    createVector3D(-2.5, 0, -4.33),
-    1000
-  ),
-  createCelestialBody(
-    createVector3D(-17.32, 0, -10),
-    createVector3D(-2.5, 0, 4.33),
-    1000
-  )
-];
+export const triangleConditions: PresetConfig = {
+  usedBodies: [0, 1, 2], // Erde, Mars, Jupiter
+  bodies: [
+    createCelestialBody(
+      createVector3D(0, 0, 20),
+      createVector3D(5, 0, 0),
+      CELESTIAL_BODIES[0].mass / MASS_SCALE
+    ),
+    createCelestialBody(
+      createVector3D(17.32, 0, -10),
+      createVector3D(-2.5, 0, -4.33),
+      CELESTIAL_BODIES[1].mass / MASS_SCALE
+    ),
+    createCelestialBody(
+      createVector3D(-17.32, 0, -10),
+      createVector3D(-2.5, 0, 4.33),
+      CELESTIAL_BODIES[2].mass / MASS_SCALE
+    )
+  ]
+};
 
 // Chaotische Konfiguration
-export const chaoticConditions: CelestialBodyData[] = [
-  // Körper 1: Blau
-  createCelestialBody(
-    createVector3D(-10, 0, 0),     // Position
-    createVector3D(3.682716, 1.506084, 0),      // Geschwindigkeit * 12
-    1000
-  ),
-  // Körper 2: Rot
-  createCelestialBody(
-    createVector3D(10, 0, 0),      // Position
-    createVector3D(3.682716, 1.506084, 0),     // Geschwindigkeit * 12
-    1000
-  ),
-  // Körper 3: Grün
-  createCelestialBody(
-    createVector3D(0, 0, 10),      // Position
-    createVector3D(-7.365432, -3.012168, 0),     // Geschwindigkeit * 12 (-2*p1, -2*p2)
-    1000
-  )
-];
+export const chaoticConditions: PresetConfig = {
+  usedBodies: [0, 1, 2], // Erde, Mars, Jupiter
+  bodies: [
+    createCelestialBody(
+      createVector3D(-10, 0, 0),
+      createVector3D(3.682716, 1.506084, 0),
+      CELESTIAL_BODIES[0].mass / MASS_SCALE
+    ),
+    createCelestialBody(
+      createVector3D(10, 0, 0),
+      createVector3D(3.682716, 1.506084, 0),
+      CELESTIAL_BODIES[1].mass / MASS_SCALE
+    ),
+    createCelestialBody(
+      createVector3D(0, 0, 10),
+      createVector3D(-7.365432, -3.012168, 0),
+      CELESTIAL_BODIES[2].mass / MASS_SCALE
+    )
+  ]
+};
 
-// Sandbox-Konfiguration mit Körpern nahe beieinander
-/*
-export const sandboxConditions: CelestialBodyData[] = [
-  createCelestialBody(
-    createVector3D(5, 0, 0),    // Position nahe am Ursprung
-    createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
-    1000
-  ),
-  createCelestialBody(
-    createVector3D(0, 0, 0),    // Leicht versetzt auf der X-Achse
-    createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
-    1000
-  ),
-  createCelestialBody(
-    createVector3D(-5, 0, 0),    // Leicht versetzt auf der Y-Achse
-    createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
-    1000
-  )
-];*/
-
-export const sandboxConditions: CelestialBodyData[] = [
-  createCelestialBody(
-    createVector3D(0, 0, 0),    // Position nahe am Ursprung
-    createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
-    82.2
-  ),
-  createCelestialBody(
-    createVector3D(1.5376, 0, 0),    // Leicht versetzt auf der X-Achse
-    createVector3D(0, 0, 1.02),    // Keine Anfangsgeschwindigkeit
-    1
-  ),
-  createCelestialBody(
-    createVector3D(1000, -1000, 0),    // Leicht versetzt auf der Y-Achse
-    createVector3D(0, 0, 0),    // Keine Anfangsgeschwindigkeit
-    1
-  )
-];
+// Sandbox-Konfiguration
+export const sandboxConditions: PresetConfig = {
+  usedBodies: [0, 3, 2], // Erde, Mond, Jupiter
+  bodies: [
+    createCelestialBody(
+      createVector3D(0, 0, 0),
+      createVector3D(0, 0, 0),
+      CELESTIAL_BODIES[0].mass / MASS_SCALE
+    ),
+    createCelestialBody(
+      createVector3D(38.44, 0, 0),
+      createVector3D(0, 0, 1.02),
+      CELESTIAL_BODIES[3].mass / MASS_SCALE  // Mond statt Mars
+    ),
+    createCelestialBody(
+      createVector3D(1000, -1000, 0),
+      createVector3D(0, 0, 0),
+      CELESTIAL_BODIES[2].mass / MASS_SCALE
+    )
+  ]
+};
 
 // Sammlung verschiedener Presets
-export const presets: Record<string, CelestialBodyData[]> = {
+export const presets: Record<string, PresetConfig> = {
   "Standard": defaultConditions,
   "Dreieck": triangleConditions,
   "Chaotisch": chaoticConditions,

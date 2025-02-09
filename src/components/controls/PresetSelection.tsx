@@ -8,11 +8,10 @@
  */
 
 import React from 'react';
-import { CelestialBodyData } from '../../simulation/Berechnung';
-import { presets } from '../../data/initialConditions';
+import { presets, PresetConfig } from '../../data/initialConditions';
 
 interface PresetSelectionProps {
-  onSelect: (bodies: CelestialBodyData[]) => void;
+  onSelect: (config: PresetConfig) => void;
 }
 
 const PresetSelection: React.FC<PresetSelectionProps> = ({ onSelect }) => {

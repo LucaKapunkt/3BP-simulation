@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 interface SceneProps {
   bodies: CelestialBodyData[];
+  usedBodies: number[];
   showEdges: boolean;
   showGrid: boolean;
   showBahnen: boolean;
@@ -24,7 +25,7 @@ interface SceneProps {
   bahnenHistory: Vector3D[][];
 }
 
-const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, showStars, bahnenHistory }) => {
+const Scene: React.FC<SceneProps> = ({ bodies, usedBodies, showEdges, showGrid, showBahnen, showStars, bahnenHistory }) => {
   const colors = ['blue', 'red', 'green'];
   
   // Lade die Hintergrundtextur für den Skydome
@@ -73,10 +74,9 @@ const Scene: React.FC<SceneProps> = ({ bodies, showEdges, showGrid, showBahnen, 
           <CelestialBody 
             key={index} 
             position={position} 
-            color={colors[index]} 
             showEdges={showEdges}
-            mass={body.mass}
-            index={index}
+            currentMass={body.currentMass}
+            celestialBodyIndex={usedBodies[index]}
           />
         );
       })}

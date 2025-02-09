@@ -33,9 +33,11 @@ function App() {
   // Speichert die Original-Preset-Werte
   const [selectedConditions, setSelectedConditions] = useState(defaultConditions);
   // Speichert die aktuell angezeigten Werte (inkl. Benutzeränderungen)
-  const [bodies, setBodies] = useState(selectedConditions);
+  const [bodies, setBodies] = useState(selectedConditions.bodies);
   // Speichert die letzten Benutzereingaben vor dem Start der Simulation
-  const [lastUserInput, setLastUserInput] = useState(selectedConditions);
+  const [lastUserInput, setLastUserInput] = useState(selectedConditions.bodies);
+  // Speichert die Indizes der verwendeten Himmelskörper
+  const [usedBodies, setUsedBodies] = useState(defaultConditions.usedBodies);
 
   const [camMode, setCamMode] = useState<CamMode>('default');
   const [selectedBody, setSelectedBody] = useState(1);
@@ -105,16 +107,16 @@ function App() {
     <div className="app-container">
       <div className="preset-container">
         <PresetSelection
-          onSelect={(newBodies) => {
-            // Bei Preset-Auswahl: Setze beide States auf die Original-Preset-Werte
-            setSelectedConditions(newBodies);
-            setBodies(newBodies);
-            setLastUserInput(newBodies);
+          onSelect={(newConfig) => {
+            setSelectedConditions(newConfig);
+            setBodies(newConfig.bodies);
+            setLastUserInput(newConfig.bodies);
+            setUsedBodies(newConfig.usedBodies);
             setIsRunning(false);
             setBahnenHistory([[], [], []]);
             setResetCam(true);
             setCamMode('default');
-            setTimeStep(15);
+            setTimeStep(5);
           }}
         />
       </div>
@@ -135,6 +137,7 @@ function App() {
         />
         <Scene
           bodies={bodies}
+          usedBodies={usedBodies}
           showEdges={showEdges}
           showGrid={showGrid}
           showBahnen={showBahnen}
@@ -156,7 +159,7 @@ function App() {
               setBodies(newBodies);
               setBahnenHistory([[], [], []]);
             }}
-            index={index}
+            index={usedBodies[index]}
             isRunning={isRunning}
           />
         ))}
