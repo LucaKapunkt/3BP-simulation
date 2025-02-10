@@ -11,7 +11,7 @@ export interface AppBody {
 
 
 // Hier definierst du deine Skalierungsfaktoren
-export const DISTANCE_SCALE = 1e8; // 1 UI-Einheit = 100tKm
+export const DISTANCE_SCALE = 1e7; // 1 UI-Einheit = 10tKm
 export const VELOCITY_SCALE = 1000; // 1 UI-Einheit = 1000m/s
 //export const MASS_SCALE = 5.97e24; // 1 UI-Einheit = eine Erdmasse
 export const MASS_SCALE = 7.35e22; // 1 UI-Einheit = eine Mondmasse
