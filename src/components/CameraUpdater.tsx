@@ -103,7 +103,7 @@ const CameraUpdater: React.FC<CameraUpdaterProps> = ({
           if (selectedBodyData && celestialBodyData) {
             const bodyRadius = calculateVisualRadius(celestialBodyData, selectedBodyData.currentMass);
             const minDistance = 1.5 * bodyRadius;
-            sphericalRef.current.radius = Math.max(minDistance, Math.min(1000, newRadius));
+            sphericalRef.current.radius = Math.max(minDistance, Math.min(5000, newRadius));
           }
         }
       }

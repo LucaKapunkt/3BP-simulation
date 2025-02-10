@@ -61,48 +61,37 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   min-height: 100vh;
   background-color: transparent;
   overflow-y: auto;
   scrollbar-width: none;
+  scrollbar-gutter: stable;
 }
 
-/* Wenn der Container zu klein ist für die Inhalte */
-@media (max-height: 800px) {
-  .bodies-container {
-    justify-content: flex-start;
-  }
-  
-  /* Scrollbar-Styles nur anwenden, wenn Overflow existiert */
-  .bodies-container:hover {
-    scrollbar-gutter: stable;
-  }
+/* Scrollbar-Styles */
+.bodies-container:hover {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  padding-right: 9px;
+}
 
-  .bodies-container:hover::-webkit-scrollbar {
-    width: 8px;
-  }
+.bodies-container:hover::-webkit-scrollbar {
+  width: 8px;
+}
 
-  /* Styles nur anwenden, wenn der Container scrollbar ist */
-  .bodies-container:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.7);
-    border-radius: 10px;
-    border: 2px solid transparent;
-  }
+.bodies-container:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
 
-  .bodies-container:hover::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-  }
+.bodies-container:hover::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
 
-  .bodies-container:hover::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  /* Nur wenn Overflow existiert, Scrollbar anzeigen */
-  .bodies-container:hover {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-  }
+.bodies-container:hover::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Styles für den Controls-Container und Preset-Container */
@@ -291,6 +280,7 @@
   width: 230px;
   display: flex;
   flex-direction: column;
+  min-height: 280px; /* Minimale Höhe */
 }
 
 .body-controls h3 {

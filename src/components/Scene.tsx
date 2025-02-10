@@ -26,10 +26,21 @@ interface SceneProps {
 }
 
 const Scene: React.FC<SceneProps> = ({ bodies, usedBodies, showEdges, showGrid, showBahnen, showStars, bahnenHistory }) => {
-  const colors = ['blue', 'red', 'green'];
+  const colors = [
+    '#FFD700',  // Gold für die Sonne
+    '#C0C0C0',  // Silber für Merkur
+    '#FFA500',  // Orange für Venus
+    '#4169E1',  // Royal Blue für die Erde
+    '#FF4500',  // Orange Red für Mars
+    '#DAA520',  // Goldenrod für Jupiter
+    '#F4A460',  // Sandy Brown für Saturn
+    '#87CEEB',  // Sky Blue für Uranus
+    '#1E90FF',  // Dodger Blue für Neptun
+    '#F0F8FF'   // Alice Blue für den Mond
+  ];
   
   // Lade die Hintergrundtextur für den Skydome
-  const spaceTexture = useTexture('./assets/stars.jpg');
+  const spaceTexture = useTexture('./assets/stars_milkyway.jpg');
 
   return (
     <>
@@ -62,7 +73,11 @@ const Scene: React.FC<SceneProps> = ({ bodies, usedBodies, showEdges, showGrid, 
         />
       )}
       {showBahnen && bahnenHistory.map((positions, index) => (
-        <Bahn key={`bahn-${index}`} positions={positions} color={colors[index]} />
+        <Bahn 
+          key={`bahn-${index}`} 
+          positions={positions} 
+          color={colors[usedBodies[index]]} 
+        />
       ))}
       {bodies.map((body, index) => {
         const position: [number, number, number] = [

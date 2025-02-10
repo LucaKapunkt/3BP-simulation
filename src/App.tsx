@@ -29,7 +29,9 @@ function App() {
   const [showGrid, setShowGrid] = useState(true);
   const [showBahnen, setShowBahnen] = useState(true);
   const [showStars, setShowStars] = useState(false);
-  const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>([[], [], []]);
+  const [bahnenHistory, setBahnenHistory] = useState<Vector3D[][]>(() => 
+    Array(defaultConditions.bodies.length).fill([])
+  );
 
   // Speichert die Original-Preset-Werte
   const [selectedConditions, setSelectedConditions] = useState(defaultConditions);
@@ -110,7 +112,7 @@ function App() {
             setLastUserInput(newConfig.bodies);
             setUsedBodies(newConfig.usedBodies);
             setIsRunning(false);
-            setBahnenHistory([[], [], []]);
+            setBahnenHistory(() => Array(newConfig.bodies.length).fill([]));
             setResetCam(true);
             setCamMode('default');
             setTimeStep(1);
@@ -156,7 +158,7 @@ function App() {
               const newBodies = [...bodies];
               newBodies[index] = newBody;
               setBodies(newBodies);
-              setBahnenHistory([[], [], []]);
+              setBahnenHistory(() => Array(newBodies.length).fill([]));
             }}
             celestialBodyIndex={usedBodies[index]}
             isRunning={isRunning}
@@ -168,10 +170,9 @@ function App() {
           isRunning={isRunning}
           onToggleRunning={() => setIsRunning(prev => !prev)}
           onReset={() => {
-            // Bei Reset: Stelle die letzten Benutzereingaben wieder her
             setBodies(lastUserInput);
             setIsRunning(false);
-            setBahnenHistory([[], [], []]);
+            setBahnenHistory(() => Array(lastUserInput.length).fill([]));
             setCamMode('default');
             setSelectedBody(1);
             setResetCam(true);
