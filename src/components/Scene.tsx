@@ -47,7 +47,7 @@ const Scene: React.FC<SceneProps> = ({ bodies, usedBodies, showEdges, showGrid, 
       {/* Skydome */}
       {showStars && (
         <mesh>
-          <sphereGeometry args={[1000, 30, 30]} />
+          <sphereGeometry args={[10000, 30, 30]} />
           <meshBasicMaterial
             map={spaceTexture}
             side={THREE.BackSide}

@@ -88,29 +88,29 @@ const chaoticOneConfig = {
 export const chaoticOneConditions: PresetConfig = chaoticOneConfig;
 
 // Sandbox-Konfiguration
-const sandboxConfig = {
-  usedBodies: [3, 9, 0], // Erde, Mond, Sonne
+const außenseiterConfig = {
+  usedBodies: [6, 7, 8], // Erde, Mond, Sonne
   get bodies() {
     return [
       createCelestialBody(
-        createVector3D(14710, 0, 0),
-        createVector3D(0, 0, 29.78),
+        createVector3D(0, 0.6, 1600),
+        createVector3D(0, 0.8, -1.5),
         CELESTIAL_BODIES[this.usedBodies[0]].mass / MASS_SCALE
       ),
       createCelestialBody(
-        createVector3D(14748.44, 0, 0),
-        createVector3D(0, 0, 31),
+        createVector3D(-50, 0, 0),
+        createVector3D(0, 1, -1.2),
         CELESTIAL_BODIES[this.usedBodies[1]].mass / MASS_SCALE  // Mond
       ),
       createCelestialBody(
-        createVector3D(0, 0, 0),
-        createVector3D(0, 0, 0),
+        createVector3D(50, 0, 0),
+        createVector3D(0, 1, 1.2),
         CELESTIAL_BODIES[this.usedBodies[2]].mass / MASS_SCALE  // Sonne
       )
     ];
   }
 };
-export const sandboxConditions: PresetConfig = sandboxConfig;
+export const außenseiterConditions: PresetConfig = außenseiterConfig;
 
 // Sandbox-Konfiguration
 const vergleichConfig = {
@@ -237,7 +237,7 @@ export const presets: Record<string, PresetConfig> = {
   "Standard": defaultConditions,
   "Dreieck": triangleConditions,
   "Chaotisch": chaoticOneConditions,
-  "Sandbox": sandboxConditions,
+  "Außenseiter": außenseiterConditions,
   "Vergleich": vergleichConditions,
   "Sonnensystem": sonnenSystemConditions
 };
