@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import { Vector3D } from '../../simulation/Berechnung';
+import { Vector3D } from '../../simulation/DimBerechnung';
 
 interface VectorInputProps {
   label: string;
